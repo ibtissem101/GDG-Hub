@@ -8,10 +8,35 @@ import { Search, ChevronDown } from 'lucide-react';
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { UserRole } from '@/types/Enum';
 
+interface Project {
+  id: number;
+  userId: string;
+  hackathonId: string;
+  name: string;
+  description: string;
+  problemStatement?: string | null;
+  solution?: string | null;
+  codeRepositoryUrl: string;
+  demoUrl?: string | null;
+  videoUrl?: string | null;
+  presentationUrl?: string | null;
+  technologies: string[];
+  category?: string | null;
+  status: string;
+  isPublic: boolean;
+  submittedAt?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+
 const ProjectsPage = () => {
   const router = useRouter();
   const [user, setUser] = useState<{ email: string; name: string } | null>(null);
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [selectedTech, setSelectedTech] = useState<string[]>([]);
   const [selectedYear, setSelectedYear] = useState('2024');
   const [showYearDropdown, setShowYearDropdown] = useState(true);
   const [showCategoriesDropdown, setShowCategoriesDropdown] = useState(true);
@@ -25,69 +50,81 @@ const ProjectsPage = () => {
       return;
     }
     setUser(JSON.parse(userData));
+    
+    // Fetch user's projects from MSW API
+    const fetchProjects = async () => {
+      try {
+        const res = await fetch('/api/projects?userId=user-1');
+        const data = await res.json();
+        setProjects(data);
+      } catch (error) {
+        console.error('Failed to fetch projects:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchProjects();
   }, [router]);
 
-  if (!user) {
+  if (!user || loading) {
     return <div className="flex h-screen items-center justify-center">Loading...</div>;
   }
 
-  // Mock projects data
-  const projects = [
-    {
-      id: 1,
-      title: 'EcoScan AI',
-      description: 'An app that identifies recyclable materials using computer vision.',
-      image: 'linear-gradient(135deg, #0f766e 0%, #134e4a 100%)',
-      tags: ['React', 'Firebase', 'Cloud Vision'],
-      team: 'Team Green',
-    },
-    {
-      id: 2,
-      title: 'HealthTrack',
-      description: 'A mobile app for tracking fitness goals and daily nutrition intake.',
-      image: 'linear-gradient(135deg, #67e8f9 0%, #22d3ee 100%)',
-      tags: ['Flutter', 'Supabase'],
-      team: 'FitDev',
-    },
-    {
-      id: 3,
-      title: 'DevConnect',
-      description: 'A social platform for developers to share projects and collaborate.',
-      image: 'linear-gradient(135deg, #38bdf8 0%, #0ea5e9 100%)',
-      tags: ['Vue.js', 'Node.js', 'MongoDB'],
-      team: 'CodeMasters',
-    },
-    {
-      id: 4,
-      title: 'CodeLearn',
-      description: 'Interactive platform for learning to code with real-time feedback.',
-      image: 'linear-gradient(135deg, #164e63 0%, #0c4a6e 100%)',
-      tags: ['Next.js', 'TypeScript', 'PostgreSQL'],
-      team: 'EduTech',
-    },
-    {
-      id: 5,
-      title: 'MarketViz',
-      description: 'Data visualization tool for stock market trends and analysis.',
-      image: 'linear-gradient(135deg, #67e8f9 0%, #22d3ee 100%)',
-      tags: ['React', 'D3.js', 'Python'],
-      team: 'DataViz Pro',
-    },
-    {
-      id: 6,
-      title: 'GameHub',
-      description: 'A web-based platform for playing and sharing indie games.',
-      image: 'linear-gradient(135deg, #0f766e 0%, #134e4a 100%)',
-      tags: ['Unity', 'WebGL', 'Node.js'],
-      team: 'GameDevs',
-    },
-  ];
+  // Get unique categories and technologies from projects
+  const allCategories = Array.from(new Set(projects.map(p => p.category).filter(Boolean))) as string[];
+  const allTechnologies = Array.from(new Set(projects.flatMap(p => p.technologies)));
 
-  const filteredProjects = projects.filter(project =>
-    project.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    project.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    project.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()))
-  );
+  // Toggle category filter
+  const toggleCategory = (category: string) => {
+    setSelectedCategories(prev => 
+      prev.includes(category) ? prev.filter(c => c !== category) : [...prev, category]
+    );
+  };
+
+  // Toggle technology filter
+  const toggleTech = (tech: string) => {
+    setSelectedTech(prev => 
+      prev.includes(tech) ? prev.filter(t => t !== tech) : [...prev, tech]
+    );
+  };
+
+  // Reset filters
+  const resetFilters = () => {
+    setSelectedCategories([]);
+    setSelectedTech([]);
+    setSearchQuery('');
+  };
+
+  // Apply filters
+  const filteredProjects = projects.filter(project => {
+    // Search filter
+    const matchesSearch = searchQuery === '' || 
+      project.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      project.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      project.technologies.some(tech => tech.toLowerCase().includes(searchQuery.toLowerCase()));
+    
+    // Category filter
+    const matchesCategory = selectedCategories.length === 0 || 
+      (project.category && selectedCategories.includes(project.category));
+    
+    // Technology filter
+    const matchesTech = selectedTech.length === 0 || 
+      project.technologies.some(tech => selectedTech.includes(tech));
+    
+    return matchesSearch && matchesCategory && matchesTech;
+  });
+
+  // Get gradient color based on category
+  const getCategoryGradient = (category?: string | null) => {
+    const gradients: Record<string, string> = {
+      'AI/ML': 'linear-gradient(135deg, #0f766e 0%, #134e4a 100%)',
+      'Web': 'linear-gradient(135deg, #38bdf8 0%, #0ea5e9 100%)',
+      'Cloud': 'linear-gradient(135deg, #67e8f9 0%, #22d3ee 100%)',
+      'Mobile': 'linear-gradient(135deg, #164e63 0%, #0c4a6e 100%)',
+    };
+    return gradients[category || ''] || 'linear-gradient(135deg, #4285f4 0%, #1967d2 100%)';
+  };
 
   return (
     <DashboardLayout userRole={userRole} userEmail={user.email} userName={user.name}>
@@ -134,15 +171,19 @@ const ProjectsPage = () => {
               </button>
               {showCategoriesDropdown && (
                 <div className="space-y-2">
-                  {['AI/ML', 'Web Dev', 'Mobile', 'IoT', 'Blockchain'].map((category) => (
+                  {allCategories.length > 0 ? allCategories.map((category) => (
                     <label key={category} className="flex items-center gap-2 text-sm">
                       <input
                         type="checkbox"
+                        checked={selectedCategories.includes(category)}
+                        onChange={() => toggleCategory(category)}
                         className="size-4 rounded border-border text-[#4285f4] focus:ring-[#4285f4]"
                       />
                       <span>{category}</span>
                     </label>
-                  ))}
+                  )) : (
+                    <p className="text-xs text-muted-foreground">No categories</p>
+                  )}
                 </div>
               )}
             </div>
@@ -158,26 +199,30 @@ const ProjectsPage = () => {
               </button>
               {showTechDropdown && (
                 <div className="space-y-2">
-                  {['React', 'Vue.js', 'Flutter', 'Node.js', 'Python'].map((tech) => (
+                  {allTechnologies.length > 0 ? allTechnologies.map((tech) => (
                     <label key={tech} className="flex items-center gap-2 text-sm">
                       <input
                         type="checkbox"
+                        checked={selectedTech.includes(tech)}
+                        onChange={() => toggleTech(tech)}
                         className="size-4 rounded border-border text-[#4285f4] focus:ring-[#4285f4]"
                       />
                       <span>{tech}</span>
                     </label>
-                  ))}
+                  )) : (
+                    <p className="text-xs text-muted-foreground">No technologies</p>
+                  )}
                 </div>
               )}
             </div>
 
             {/* Action Buttons */}
             <div className="space-y-2 border-t border-border/40 pt-4">
-              <button className="w-full rounded-lg bg-[#4285f4] px-4 py-2.5 text-sm font-medium text-white transition-all hover:bg-[#1967d2]">
-                Apply Filters
-              </button>
-              <button className="w-full rounded-lg border border-border bg-background px-4 py-2.5 text-sm font-medium transition-all hover:bg-accent">
-                Reset
+              <button 
+                onClick={resetFilters}
+                className="w-full rounded-lg border border-border bg-background px-4 py-2.5 text-sm font-medium transition-all hover:bg-accent"
+              >
+                Reset Filters
               </button>
             </div>
           </div>
@@ -210,13 +255,13 @@ const ProjectsPage = () => {
                 {/* Project Image/Gradient */}
                 <div 
                   className="h-40 w-full"
-                  style={{ background: project.image }}
+                  style={{ background: getCategoryGradient(project.category) }}
                 />
 
                 {/* Project Content */}
                 <div className="p-5">
                   <h3 className="mb-2 text-lg font-bold transition-colors group-hover:text-[#4285f4]">
-                    {project.title}
+                    {project.name}
                   </h3>
                   <p className="mb-4 text-sm text-muted-foreground line-clamp-2">
                     {project.description}
@@ -224,19 +269,21 @@ const ProjectsPage = () => {
 
                   {/* Tags */}
                   <div className="mb-4 flex flex-wrap gap-2">
-                    {project.tags.map((tag, index) => (
+                    {project.technologies.map((tech, index) => (
                       <span
                         key={index}
                         className="rounded-md bg-[#4285f4]/10 px-2.5 py-1 text-xs font-medium text-[#4285f4]"
                       >
-                        {tag}
+                        {tech}
                       </span>
                     ))}
                   </div>
 
                   {/* Footer */}
                   <div className="flex items-center justify-between border-t border-border/40 pt-4">
-                    <span className="text-xs text-muted-foreground">{project.team}</span>
+                    <span className="text-xs text-muted-foreground">
+                      {project.category || 'Uncategorized'}
+                    </span>
                     <Link
                       href={`/dashboard/projects/${project.id}`}
                       className="flex items-center gap-1 text-sm font-medium text-[#4285f4] hover:underline"

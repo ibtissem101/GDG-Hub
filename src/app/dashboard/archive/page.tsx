@@ -8,14 +8,37 @@ import { Search, ChevronDown, Calendar } from 'lucide-react';
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { UserRole } from '@/types/Enum';
 
+interface Project {
+  id: number;
+  userId: string;
+  hackathonId: string;
+  name: string;
+  description: string;
+  problemStatement?: string | null;
+  solution?: string | null;
+  codeRepositoryUrl: string;
+  demoUrl?: string | null;
+  videoUrl?: string | null;
+  presentationUrl?: string | null;
+  technologies: string[];
+  category?: string | null;
+  status: string;
+  isPublic: boolean;
+  submittedAt?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+
 const ArchivePage = () => {
   const router = useRouter();
   const [user, setUser] = useState<{ email: string; name: string } | null>(null);
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [selectedYear, setSelectedYear] = useState('all');
   const [showYearDropdown, setShowYearDropdown] = useState(true);
   const [showCategoriesDropdown, setShowCategoriesDropdown] = useState(true);
-  const [showTechDropdown, setShowTechDropdown] = useState(true);
   const userRole = UserRole.PARTICIPANT;
 
   useEffect(() => {
@@ -25,96 +48,65 @@ const ArchivePage = () => {
       return;
     }
     setUser(JSON.parse(userData));
+    
+    // Fetch reviewed/archived projects from MSW API
+    const fetchProjects = async () => {
+      try {
+        const res = await fetch('/api/projects?status=reviewed');
+        const data = await res.json();
+        setProjects(data);
+      } catch (error) {
+        console.error('Failed to fetch archived projects:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchProjects();
   }, [router]);
 
-  if (!user) {
+  if (!user || loading) {
     return <div className="flex h-screen items-center justify-center">Loading...</div>;
   }
 
-  // Mock archived projects data
-  const projects = [
-    {
-      id: 1,
-      title: 'SmartCity Dashboard',
-      description: 'Real-time monitoring system for urban infrastructure and services.',
-      image: 'linear-gradient(135deg, #0f766e 0%, #134e4a 100%)',
-      tags: ['React', 'Node.js', 'MongoDB'],
-      year: '2023',
-      winner: true,
-    },
-    {
-      id: 2,
-      title: 'EduLearn Platform',
-      description: 'Interactive online learning platform with AI-powered recommendations.',
-      image: 'linear-gradient(135deg, #67e8f9 0%, #22d3ee 100%)',
-      tags: ['Next.js', 'Python', 'TensorFlow'],
-      year: '2023',
-      winner: false,
-    },
-    {
-      id: 3,
-      title: 'GreenEnergy Tracker',
-      description: 'Monitor and optimize renewable energy consumption in smart homes.',
-      image: 'linear-gradient(135deg, #38bdf8 0%, #0ea5e9 100%)',
-      tags: ['Vue.js', 'Firebase', 'IoT'],
-      year: '2022',
-      winner: true,
-    },
-    {
-      id: 4,
-      title: 'HealthBuddy',
-      description: 'AI-powered health assistant for personalized wellness recommendations.',
-      image: 'linear-gradient(135deg, #164e63 0%, #0c4a6e 100%)',
-      tags: ['Flutter', 'Python', 'ML'],
-      year: '2022',
-      winner: false,
-    },
-    {
-      id: 5,
-      title: 'CryptoWallet Pro',
-      description: 'Secure multi-chain cryptocurrency wallet with DeFi integration.',
-      image: 'linear-gradient(135deg, #0f766e 0%, #134e4a 100%)',
-      tags: ['React', 'Blockchain', 'Web3'],
-      year: '2023',
-      winner: false,
-    },
-    {
-      id: 6,
-      title: 'FoodShare Network',
-      description: 'Connect food donors with local charities to reduce waste.',
-      image: 'linear-gradient(135deg, #67e8f9 0%, #22d3ee 100%)',
-      tags: ['Angular', 'Node.js', 'PostgreSQL'],
-      year: '2022',
-      winner: false,
-    },
-    {
-      id: 7,
-      title: 'CodeCollab IDE',
-      description: 'Real-time collaborative coding environment with video chat.',
-      image: 'linear-gradient(135deg, #38bdf8 0%, #0ea5e9 100%)',
-      tags: ['React', 'WebRTC', 'Socket.io'],
-      year: '2023',
-      winner: false,
-    },
-    {
-      id: 8,
-      title: 'AIArtGenerator',
-      description: 'Generate unique artwork using advanced neural networks.',
-      image: 'linear-gradient(135deg, #164e63 0%, #0c4a6e 100%)',
-      tags: ['Python', 'PyTorch', 'FastAPI'],
-      year: '2022',
-      winner: true,
-    },
-  ];
+  // Get unique categories from projects
+  const allCategories = Array.from(new Set(projects.map(p => p.category).filter(Boolean))) as string[];
+  
+  // Toggle category filter
+  const toggleCategory = (category: string) => {
+    setSelectedCategories(prev => 
+      prev.includes(category) ? prev.filter(c => c !== category) : [...prev, category]
+    );
+  };
 
+  // Get gradient color based on category
+  const getCategoryGradient = (category?: string | null) => {
+    const gradients: Record<string, string> = {
+      'AI/ML': 'linear-gradient(135deg, #0f766e 0%, #134e4a 100%)',
+      'Web': 'linear-gradient(135deg, #38bdf8 0%, #0ea5e9 100%)',
+      'Cloud': 'linear-gradient(135deg, #67e8f9 0%, #22d3ee 100%)',
+      'Mobile': 'linear-gradient(135deg, #164e63 0%, #0c4a6e 100%)',
+    };
+    return gradients[category || ''] || 'linear-gradient(135deg, #4285f4 0%, #1967d2 100%)';
+  };
+
+  // Apply filters
   const filteredProjects = projects.filter(project => {
-    const matchesSearch = project.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    // Search filter
+    const matchesSearch = searchQuery === '' || 
+      project.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       project.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      project.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()));
+      project.technologies.some(tech => tech.toLowerCase().includes(searchQuery.toLowerCase()));
     
-    const matchesYear = selectedYear === 'all' || project.year === selectedYear;
+    // Category filter
+    const matchesCategory = selectedCategories.length === 0 || 
+      (project.category && selectedCategories.includes(project.category));
     
-    return matchesSearch && matchesYear;
+    // Year filter (extract year from createdAt)
+    const projectYear = new Date(project.createdAt).getFullYear().toString();
+    const matchesYear = selectedYear === 'all' || projectYear === selectedYear;
+    
+    return matchesSearch && matchesCategory && matchesYear;
   });
 
   return (
@@ -173,53 +165,34 @@ const ArchivePage = () => {
               </button>
               {showCategoriesDropdown && (
                 <div className="space-y-2">
-                  {['AI/ML', 'Web Dev', 'Mobile', 'IoT', 'Blockchain'].map((category) => (
+                  {allCategories.length > 0 ? allCategories.map((category) => (
                     <label key={category} className="flex items-center gap-2 text-sm">
                       <input
                         type="checkbox"
+                        checked={selectedCategories.includes(category)}
+                        onChange={() => toggleCategory(category)}
                         className="size-4 rounded border-border text-[#4285f4] focus:ring-[#4285f4]"
                       />
                       <span>{category}</span>
                     </label>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            {/* Technologies */}
-            <div>
-              <button
-                onClick={() => setShowTechDropdown(!showTechDropdown)}
-                className="mb-3 flex w-full items-center justify-between text-sm font-semibold"
-              >
-                <span>Technologies</span>
-                <ChevronDown className={`size-4 transition-transform ${showTechDropdown ? 'rotate-180' : ''}`} />
-              </button>
-              {showTechDropdown && (
-                <div className="space-y-2">
-                  {['React', 'Vue.js', 'Flutter', 'Node.js', 'Python'].map((tech) => (
-                    <label key={tech} className="flex items-center gap-2 text-sm">
-                      <input
-                        type="checkbox"
-                        className="size-4 rounded border-border text-[#4285f4] focus:ring-[#4285f4]"
-                      />
-                      <span>{tech}</span>
-                    </label>
-                  ))}
+                  )) : (
+                    <p className="text-xs text-muted-foreground">No categories</p>
+                  )}
                 </div>
               )}
             </div>
 
             {/* Action Buttons */}
             <div className="space-y-2 border-t border-border/40 pt-4">
-              <button className="w-full rounded-lg bg-[#4285f4] px-4 py-2.5 text-sm font-medium text-white transition-all hover:bg-[#1967d2]">
-                Apply Filters
-              </button>
               <button 
-                onClick={() => setSelectedYear('all')}
+                onClick={() => {
+                  setSelectedCategories([]);
+                  setSelectedYear('all');
+                  setSearchQuery('');
+                }}
                 className="w-full rounded-lg border border-border bg-background px-4 py-2.5 text-sm font-medium transition-all hover:bg-accent"
               >
-                Reset
+                Reset Filters
               </button>
             </div>
           </div>
@@ -251,62 +224,63 @@ const ArchivePage = () => {
 
           {/* Projects Grid */}
           <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-            {filteredProjects.map((project) => (
-              <div
-                key={project.id}
-                className="group overflow-hidden rounded-2xl border border-border/40 bg-card/50 shadow-sm backdrop-blur-sm transition-all hover:shadow-lg hover:border-[#4285f4]/40"
-              >
-                {/* Project Image/Gradient */}
-                <div className="relative">
-                  <div 
-                    className="h-40 w-full"
-                    style={{ background: project.image }}
-                  />
-                  {project.winner && (
-                    <div className="absolute right-3 top-3 flex items-center gap-1 rounded-lg bg-[#f9ab00] px-2.5 py-1 text-xs font-bold text-white shadow-lg">
-                      🏆 Winner
+            {filteredProjects.map((project) => {
+              const projectYear = new Date(project.createdAt).getFullYear().toString();
+              
+              return (
+                <div
+                  key={project.id}
+                  className="group overflow-hidden rounded-2xl border border-border/40 bg-card/50 shadow-sm backdrop-blur-sm transition-all hover:shadow-lg hover:border-[#4285f4]/40"
+                >
+                  {/* Project Image/Gradient */}
+                  <div className="relative">
+                    <div 
+                      className="h-40 w-full"
+                      style={{ background: getCategoryGradient(project.category) }}
+                    />
+                    <div className="absolute bottom-3 left-3 flex items-center gap-1 rounded-lg bg-black/50 px-2.5 py-1 text-xs font-medium text-white backdrop-blur-sm">
+                      <Calendar className="size-3" />
+                      {projectYear}
                     </div>
-                  )}
-                  <div className="absolute bottom-3 left-3 flex items-center gap-1 rounded-lg bg-black/50 px-2.5 py-1 text-xs font-medium text-white backdrop-blur-sm">
-                    <Calendar className="size-3" />
-                    {project.year}
                   </div>
-                </div>
 
-                {/* Project Content */}
-                <div className="p-5">
-                  <h3 className="mb-2 text-lg font-bold transition-colors group-hover:text-[#4285f4]">
-                    {project.title}
-                  </h3>
-                  <p className="mb-4 text-sm text-muted-foreground line-clamp-2">
-                    {project.description}
-                  </p>
+                  {/* Project Content */}
+                  <div className="p-5">
+                    <h3 className="mb-2 text-lg font-bold transition-colors group-hover:text-[#4285f4]">
+                      {project.name}
+                    </h3>
+                    <p className="mb-4 text-sm text-muted-foreground line-clamp-2">
+                      {project.description}
+                    </p>
 
-                  {/* Tags */}
-                  <div className="mb-4 flex flex-wrap gap-2">
-                    {project.tags.map((tag, index) => (
-                      <span
-                        key={index}
-                        className="rounded-md bg-[#4285f4]/10 px-2.5 py-1 text-xs font-medium text-[#4285f4]"
-                      >
-                        {tag}
+                    {/* Tags */}
+                    <div className="mb-4 flex flex-wrap gap-2">
+                      {project.technologies.map((tech, index) => (
+                        <span
+                          key={index}
+                          className="rounded-md bg-[#4285f4]/10 px-2.5 py-1 text-xs font-medium text-[#4285f4]"
+                        >
+                          {tech}
+                        </span>
+                      ))}
+                    </div>
+
+                    {/* Footer */}
+                    <div className="flex items-center justify-between border-t border-border/40 pt-4">
+                      <span className="text-xs text-muted-foreground">
+                        {project.category || 'Archived Project'}
                       </span>
-                    ))}
-                  </div>
-
-                  {/* Footer */}
-                  <div className="flex items-center justify-between border-t border-border/40 pt-4">
-                    <span className="text-xs text-muted-foreground">Archived Project</span>
-                    <Link
-                      href={`/dashboard/archive/${project.id}`}
-                      className="flex items-center gap-1 text-sm font-medium text-[#4285f4] hover:underline"
-                    >
-                      View Details →
-                    </Link>
+                      <Link
+                        href={`/dashboard/archive/${project.id}`}
+                        className="flex items-center gap-1 text-sm font-medium text-[#4285f4] hover:underline"
+                      >
+                        View Details →
+                      </Link>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
 
           {filteredProjects.length === 0 && (

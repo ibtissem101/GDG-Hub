@@ -1,6 +1,7 @@
 import '@/styles/global.css';
 
 import type { Metadata } from 'next';
+import { MSWProvider } from '@/components/MSWProvider';
 
 export const metadata: Metadata = {
   icons: [
@@ -39,8 +40,9 @@ export default function RootLayout(props: {
           <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Google+Sans+Mono:wght@400;700&display=swap" rel="stylesheet" />
         </head>
         <body className="bg-background text-foreground antialiased" suppressHydrationWarning>
-          {props.children}
- 
+          <MSWProvider>
+            {props.children}
+          </MSWProvider>
         </body>
       </html>
 
