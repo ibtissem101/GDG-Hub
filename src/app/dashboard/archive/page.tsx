@@ -1,14 +1,14 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { Calendar, ChevronDown, Search } from 'lucide-react';
 import Link from 'next/link';
-import { Search, ChevronDown, Calendar } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { UserRole } from '@/types/Enum';
 
-interface Project {
+type Project = {
   id: number;
   userId: string;
   hackathonId: string;
@@ -27,7 +27,7 @@ interface Project {
   submittedAt?: string | null;
   updatedAt: string;
   createdAt: string;
-}
+};
 
 const ArchivePage = () => {
   const router = useRouter();
@@ -48,7 +48,7 @@ const ArchivePage = () => {
       return;
     }
     setUser(JSON.parse(userData));
-    
+
     // Fetch reviewed/archived projects from MSW API
     const fetchProjects = async () => {
       try {
@@ -61,7 +61,7 @@ const ArchivePage = () => {
         setLoading(false);
       }
     };
-    
+
     fetchProjects();
   }, [router]);
 
@@ -71,11 +71,11 @@ const ArchivePage = () => {
 
   // Get unique categories from projects
   const allCategories = Array.from(new Set(projects.map(p => p.category).filter(Boolean))) as string[];
-  
+
   // Toggle category filter
   const toggleCategory = (category: string) => {
-    setSelectedCategories(prev => 
-      prev.includes(category) ? prev.filter(c => c !== category) : [...prev, category]
+    setSelectedCategories(prev =>
+      prev.includes(category) ? prev.filter(c => c !== category) : [...prev, category],
     );
   };
 
@@ -91,32 +91,32 @@ const ArchivePage = () => {
   };
 
   // Apply filters
-  const filteredProjects = projects.filter(project => {
+  const filteredProjects = projects.filter((project) => {
     // Search filter
-    const matchesSearch = searchQuery === '' || 
-      project.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      project.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      project.technologies.some(tech => tech.toLowerCase().includes(searchQuery.toLowerCase()));
-    
+    const matchesSearch = searchQuery === ''
+      || project.name.toLowerCase().includes(searchQuery.toLowerCase())
+      || project.description.toLowerCase().includes(searchQuery.toLowerCase())
+      || project.technologies.some(tech => tech.toLowerCase().includes(searchQuery.toLowerCase()));
+
     // Category filter
-    const matchesCategory = selectedCategories.length === 0 || 
-      (project.category && selectedCategories.includes(project.category));
-    
+    const matchesCategory = selectedCategories.length === 0
+      || (project.category && selectedCategories.includes(project.category));
+
     // Year filter (extract year from createdAt)
     const projectYear = new Date(project.createdAt).getFullYear().toString();
     const matchesYear = selectedYear === 'all' || projectYear === selectedYear;
-    
+
     return matchesSearch && matchesCategory && matchesYear;
   });
 
   return (
-    <DashboardLayout userRole={userRole} userEmail={user.email} userName={user.name}>
+    <DashboardLayout requiredRoles={[UserRole.PARTICIPANT, UserRole.ADMIN]} userRole={userRole} userEmail={user.email} userName={user.name}>
       <div className="flex h-full gap-6">
         {/* Sidebar Filters */}
-        <div className="w-64 flex-shrink-0">
+        <div className="w-64 shrink-0">
           <div className="sticky top-6 space-y-6 rounded-2xl border border-border/40 bg-card/30 p-6 shadow-sm backdrop-blur-sm">
             <h2 className="text-lg font-bold">Filters</h2>
-            
+
             {/* Hackathon Year Filter */}
             <div>
               <button
@@ -138,7 +138,7 @@ const ArchivePage = () => {
                     />
                     <span>All Years</span>
                   </label>
-                  {['2024', '2023', '2022'].map((year) => (
+                  {['2024', '2023', '2022'].map(year => (
                     <label key={year} className="flex items-center gap-2 text-sm">
                       <input
                         type="radio"
@@ -165,26 +165,28 @@ const ArchivePage = () => {
               </button>
               {showCategoriesDropdown && (
                 <div className="space-y-2">
-                  {allCategories.length > 0 ? allCategories.map((category) => (
-                    <label key={category} className="flex items-center gap-2 text-sm">
-                      <input
-                        type="checkbox"
-                        checked={selectedCategories.includes(category)}
-                        onChange={() => toggleCategory(category)}
-                        className="size-4 rounded border-border text-[#4285f4] focus:ring-[#4285f4]"
-                      />
-                      <span>{category}</span>
-                    </label>
-                  )) : (
-                    <p className="text-xs text-muted-foreground">No categories</p>
-                  )}
+                  {allCategories.length > 0
+                    ? allCategories.map(category => (
+                      <label key={category} className="flex items-center gap-2 text-sm">
+                        <input
+                          type="checkbox"
+                          checked={selectedCategories.includes(category)}
+                          onChange={() => toggleCategory(category)}
+                          className="size-4 rounded border-border text-[#4285f4] focus:ring-[#4285f4]"
+                        />
+                        <span>{category}</span>
+                      </label>
+                    ))
+                    : (
+                        <p className="text-xs text-muted-foreground">No categories</p>
+                      )}
                 </div>
               )}
             </div>
 
             {/* Action Buttons */}
             <div className="space-y-2 border-t border-border/40 pt-4">
-              <button 
+              <button
                 onClick={() => {
                   setSelectedCategories([]);
                   setSelectedYear('all');
@@ -206,7 +208,11 @@ const ArchivePage = () => {
               <div>
                 <h1 className="text-3xl font-bold">Project Archive</h1>
                 <p className="mt-1 text-sm text-muted-foreground">
-                  Browse {filteredProjects.length} past hackathon projects
+                  Browse
+                  {' '}
+                  {filteredProjects.length}
+                  {' '}
+                  past hackathon projects
                 </p>
               </div>
               <div className="relative w-80">
@@ -215,7 +221,7 @@ const ArchivePage = () => {
                   type="text"
                   placeholder="Search archived projects..."
                   value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onChange={e => setSearchQuery(e.target.value)}
                   className="w-full rounded-lg border border-border bg-background/60 py-2.5 pl-10 pr-4 text-sm transition-colors focus:border-[#4285f4] focus:outline-none focus:ring-2 focus:ring-[#4285f4]/20"
                 />
               </div>
@@ -226,15 +232,15 @@ const ArchivePage = () => {
           <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
             {filteredProjects.map((project) => {
               const projectYear = new Date(project.createdAt).getFullYear().toString();
-              
+
               return (
                 <div
                   key={project.id}
-                  className="group overflow-hidden rounded-2xl border border-border/40 bg-card/50 shadow-sm backdrop-blur-sm transition-all hover:shadow-lg hover:border-[#4285f4]/40"
+                  className="group overflow-hidden rounded-2xl border border-border/40 bg-card/50 shadow-sm backdrop-blur-sm transition-all hover:border-[#4285f4]/40 hover:shadow-lg"
                 >
                   {/* Project Image/Gradient */}
                   <div className="relative">
-                    <div 
+                    <div
                       className="h-40 w-full"
                       style={{ background: getCategoryGradient(project.category) }}
                     />
@@ -249,7 +255,7 @@ const ArchivePage = () => {
                     <h3 className="mb-2 text-lg font-bold transition-colors group-hover:text-[#4285f4]">
                       {project.name}
                     </h3>
-                    <p className="mb-4 text-sm text-muted-foreground line-clamp-2">
+                    <p className="mb-4 line-clamp-2 text-sm text-muted-foreground">
                       {project.description}
                     </p>
 

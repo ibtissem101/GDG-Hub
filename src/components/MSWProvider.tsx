@@ -28,13 +28,14 @@ export function MSWProvider({ children }: { children: React.ReactNode }) {
   // In development, wait for MSW to be ready
   if (process.env.NODE_ENV === 'development' && !mswReady) {
     return (
-      <div style={{ 
-        display: 'flex', 
-        alignItems: 'center', 
-        justifyContent: 'center', 
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
         height: '100vh',
-        fontFamily: 'system-ui, sans-serif'
-      }}>
+        fontFamily: 'system-ui, sans-serif',
+      }}
+      >
         <div style={{ textAlign: 'center' }}>
           <div style={{ fontSize: '24px', marginBottom: '10px' }}>🎭</div>
           <div>Loading MSW...</div>

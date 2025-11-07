@@ -9,7 +9,7 @@ export const Logo = (props: {
       alt="GDG Logo"
       width={45}
       height={28}
- 
+
     />
     {!props.isTextHidden && (
       <span className="font-bold">

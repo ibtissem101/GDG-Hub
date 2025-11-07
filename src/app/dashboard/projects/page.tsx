@@ -1,14 +1,14 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { ChevronDown, Search } from 'lucide-react';
 import Link from 'next/link';
-import { Search, ChevronDown } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { UserRole } from '@/types/Enum';
 
-interface Project {
+type Project = {
   id: number;
   userId: string;
   hackathonId: string;
@@ -27,7 +27,7 @@ interface Project {
   submittedAt?: string | null;
   updatedAt: string;
   createdAt: string;
-}
+};
 
 const ProjectsPage = () => {
   const router = useRouter();
@@ -50,7 +50,7 @@ const ProjectsPage = () => {
       return;
     }
     setUser(JSON.parse(userData));
-    
+
     // Fetch user's projects from MSW API
     const fetchProjects = async () => {
       try {
@@ -63,7 +63,7 @@ const ProjectsPage = () => {
         setLoading(false);
       }
     };
-    
+
     fetchProjects();
   }, [router]);
 
@@ -77,15 +77,15 @@ const ProjectsPage = () => {
 
   // Toggle category filter
   const toggleCategory = (category: string) => {
-    setSelectedCategories(prev => 
-      prev.includes(category) ? prev.filter(c => c !== category) : [...prev, category]
+    setSelectedCategories(prev =>
+      prev.includes(category) ? prev.filter(c => c !== category) : [...prev, category],
     );
   };
 
   // Toggle technology filter
   const toggleTech = (tech: string) => {
-    setSelectedTech(prev => 
-      prev.includes(tech) ? prev.filter(t => t !== tech) : [...prev, tech]
+    setSelectedTech(prev =>
+      prev.includes(tech) ? prev.filter(t => t !== tech) : [...prev, tech],
     );
   };
 
@@ -97,21 +97,21 @@ const ProjectsPage = () => {
   };
 
   // Apply filters
-  const filteredProjects = projects.filter(project => {
+  const filteredProjects = projects.filter((project) => {
     // Search filter
-    const matchesSearch = searchQuery === '' || 
-      project.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      project.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      project.technologies.some(tech => tech.toLowerCase().includes(searchQuery.toLowerCase()));
-    
+    const matchesSearch = searchQuery === ''
+      || project.name.toLowerCase().includes(searchQuery.toLowerCase())
+      || project.description.toLowerCase().includes(searchQuery.toLowerCase())
+      || project.technologies.some(tech => tech.toLowerCase().includes(searchQuery.toLowerCase()));
+
     // Category filter
-    const matchesCategory = selectedCategories.length === 0 || 
-      (project.category && selectedCategories.includes(project.category));
-    
+    const matchesCategory = selectedCategories.length === 0
+      || (project.category && selectedCategories.includes(project.category));
+
     // Technology filter
-    const matchesTech = selectedTech.length === 0 || 
-      project.technologies.some(tech => selectedTech.includes(tech));
-    
+    const matchesTech = selectedTech.length === 0
+      || project.technologies.some(tech => selectedTech.includes(tech));
+
     return matchesSearch && matchesCategory && matchesTech;
   });
 
@@ -127,13 +127,13 @@ const ProjectsPage = () => {
   };
 
   return (
-    <DashboardLayout userRole={userRole} userEmail={user.email} userName={user.name}>
+    <DashboardLayout requiredRoles={[UserRole.PARTICIPANT, UserRole.ADMIN]} userRole={userRole} userEmail={user.email} userName={user.name}>
       <div className="flex h-full gap-6">
         {/* Sidebar Filters */}
-        <div className="w-64 flex-shrink-0">
+        <div className="w-64 shrink-0">
           <div className="sticky top-6 space-y-6 rounded-2xl border border-border/40 bg-card/30 p-6 shadow-sm backdrop-blur-sm">
             <h2 className="text-lg font-bold">Filters</h2>
-            
+
             {/* Hackathon Year Filter */}
             <div>
               <button
@@ -145,7 +145,7 @@ const ProjectsPage = () => {
               </button>
               {showYearDropdown && (
                 <div className="space-y-2">
-                  {['2024', '2023', '2022'].map((year) => (
+                  {['2024', '2023', '2022'].map(year => (
                     <label key={year} className="flex items-center gap-2 text-sm">
                       <input
                         type="checkbox"
@@ -171,19 +171,21 @@ const ProjectsPage = () => {
               </button>
               {showCategoriesDropdown && (
                 <div className="space-y-2">
-                  {allCategories.length > 0 ? allCategories.map((category) => (
-                    <label key={category} className="flex items-center gap-2 text-sm">
-                      <input
-                        type="checkbox"
-                        checked={selectedCategories.includes(category)}
-                        onChange={() => toggleCategory(category)}
-                        className="size-4 rounded border-border text-[#4285f4] focus:ring-[#4285f4]"
-                      />
-                      <span>{category}</span>
-                    </label>
-                  )) : (
-                    <p className="text-xs text-muted-foreground">No categories</p>
-                  )}
+                  {allCategories.length > 0
+                    ? allCategories.map(category => (
+                      <label key={category} className="flex items-center gap-2 text-sm">
+                        <input
+                          type="checkbox"
+                          checked={selectedCategories.includes(category)}
+                          onChange={() => toggleCategory(category)}
+                          className="size-4 rounded border-border text-[#4285f4] focus:ring-[#4285f4]"
+                        />
+                        <span>{category}</span>
+                      </label>
+                    ))
+                    : (
+                        <p className="text-xs text-muted-foreground">No categories</p>
+                      )}
                 </div>
               )}
             </div>
@@ -199,26 +201,28 @@ const ProjectsPage = () => {
               </button>
               {showTechDropdown && (
                 <div className="space-y-2">
-                  {allTechnologies.length > 0 ? allTechnologies.map((tech) => (
-                    <label key={tech} className="flex items-center gap-2 text-sm">
-                      <input
-                        type="checkbox"
-                        checked={selectedTech.includes(tech)}
-                        onChange={() => toggleTech(tech)}
-                        className="size-4 rounded border-border text-[#4285f4] focus:ring-[#4285f4]"
-                      />
-                      <span>{tech}</span>
-                    </label>
-                  )) : (
-                    <p className="text-xs text-muted-foreground">No technologies</p>
-                  )}
+                  {allTechnologies.length > 0
+                    ? allTechnologies.map(tech => (
+                      <label key={tech} className="flex items-center gap-2 text-sm">
+                        <input
+                          type="checkbox"
+                          checked={selectedTech.includes(tech)}
+                          onChange={() => toggleTech(tech)}
+                          className="size-4 rounded border-border text-[#4285f4] focus:ring-[#4285f4]"
+                        />
+                        <span>{tech}</span>
+                      </label>
+                    ))
+                    : (
+                        <p className="text-xs text-muted-foreground">No technologies</p>
+                      )}
                 </div>
               )}
             </div>
 
             {/* Action Buttons */}
             <div className="space-y-2 border-t border-border/40 pt-4">
-              <button 
+              <button
                 onClick={resetFilters}
                 className="w-full rounded-lg border border-border bg-background px-4 py-2.5 text-sm font-medium transition-all hover:bg-accent"
               >
@@ -239,7 +243,7 @@ const ProjectsPage = () => {
                 type="text"
                 placeholder="Search projects by title, team..."
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                onChange={e => setSearchQuery(e.target.value)}
                 className="w-full rounded-lg border border-border bg-background/60 py-2.5 pl-10 pr-4 text-sm transition-colors focus:border-[#4285f4] focus:outline-none focus:ring-2 focus:ring-[#4285f4]/20"
               />
             </div>
@@ -247,13 +251,13 @@ const ProjectsPage = () => {
 
           {/* Projects Grid */}
           <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-            {filteredProjects.map((project) => (
+            {filteredProjects.map(project => (
               <div
                 key={project.id}
-                className="group overflow-hidden rounded-2xl border border-border/40 bg-card/50 shadow-sm backdrop-blur-sm transition-all hover:shadow-lg hover:border-[#4285f4]/40"
+                className="group overflow-hidden rounded-2xl border border-border/40 bg-card/50 shadow-sm backdrop-blur-sm transition-all hover:border-[#4285f4]/40 hover:shadow-lg"
               >
                 {/* Project Image/Gradient */}
-                <div 
+                <div
                   className="h-40 w-full"
                   style={{ background: getCategoryGradient(project.category) }}
                 />
@@ -263,7 +267,7 @@ const ProjectsPage = () => {
                   <h3 className="mb-2 text-lg font-bold transition-colors group-hover:text-[#4285f4]">
                     {project.name}
                   </h3>
-                  <p className="mb-4 text-sm text-muted-foreground line-clamp-2">
+                  <p className="mb-4 line-clamp-2 text-sm text-muted-foreground">
                     {project.description}
                   </p>
 

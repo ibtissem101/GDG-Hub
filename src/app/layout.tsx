@@ -1,6 +1,7 @@
 import '@/styles/global.css';
 
 import type { Metadata } from 'next';
+
 import { MSWProvider } from '@/components/MSWProvider';
 
 export const metadata: Metadata = {
@@ -33,18 +34,18 @@ export default function RootLayout(props: {
 }) {
   return (
 
-      <html lang="en" suppressHydrationWarning>
-        <head>
-          <link rel="preconnect" href="https://fonts.googleapis.com" />
-          <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-          <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Google+Sans+Mono:wght@400;700&display=swap" rel="stylesheet" />
-        </head>
-        <body className="bg-background text-foreground antialiased" suppressHydrationWarning>
-          <MSWProvider>
-            {props.children}
-          </MSWProvider>
-        </body>
-      </html>
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Google+Sans+Mono:wght@400;700&display=swap" rel="stylesheet" />
+      </head>
+      <body className="bg-background text-foreground antialiased" suppressHydrationWarning>
+        <MSWProvider>
+          {props.children}
+        </MSWProvider>
+      </body>
+    </html>
 
   );
 }

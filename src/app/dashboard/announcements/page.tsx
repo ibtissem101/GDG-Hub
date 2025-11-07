@@ -1,6 +1,7 @@
+import { Bell, Calendar, Clock, Megaphone, Users } from 'lucide-react';
+
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { UserRole } from '@/types/Enum';
-import { Megaphone, Clock, Users, Bell, Calendar } from 'lucide-react';
 
 export async function generateMetadata() {
   return {
@@ -28,7 +29,7 @@ const AnnouncementsPage = async () => {
             <div className="flex size-12 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[#f8d8d8] to-[#f8d8d8] dark:from-red-900/30 dark:to-red-800/30">
               <Megaphone className="size-6 text-[#ea4335] dark:text-red-400" />
             </div>
-            <div className="flex-1 min-w-0">
+            <div className="min-w-0 flex-1">
               <div className="mb-2 flex items-center gap-2">
                 <span className="rounded-lg border border-[#ea4335]/20 bg-[#f8d8d8] px-2 py-0.5 text-xs font-medium text-[#ea4335]">
                   Important
@@ -49,7 +50,7 @@ const AnnouncementsPage = async () => {
             <div className="flex size-12 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[#c3ecf6] to-[#c3ecf6] dark:from-blue-900/30 dark:to-blue-800/30">
               <Clock className="size-6 text-[#4285f4] dark:text-blue-400" />
             </div>
-            <div className="flex-1 min-w-0">
+            <div className="min-w-0 flex-1">
               <div className="mb-2 flex items-center gap-2">
                 <span className="rounded-lg border border-[#4285f4]/20 bg-[#c3ecf6] px-2 py-0.5 text-xs font-medium text-[#4285f4]">
                   Workshop
@@ -70,7 +71,7 @@ const AnnouncementsPage = async () => {
             <div className="flex size-12 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[#ffe7a5] to-[#ffe7a5] dark:from-yellow-900/30 dark:to-yellow-800/30">
               <Users className="size-6 text-[#f9ab00] dark:text-yellow-400" />
             </div>
-            <div className="flex-1 min-w-0">
+            <div className="min-w-0 flex-1">
               <div className="mb-2 flex items-center gap-2">
                 <span className="rounded-lg border border-[#f9ab00]/20 bg-[#ffe7a5] px-2 py-0.5 text-xs font-medium text-[#f9ab00]">
                   General
@@ -91,7 +92,7 @@ const AnnouncementsPage = async () => {
             <div className="flex size-12 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[#c3ecf6] to-[#c3ecf6] dark:from-blue-900/30 dark:to-blue-800/30">
               <Calendar className="size-6 text-[#4285f4] dark:text-blue-400" />
             </div>
-            <div className="flex-1 min-w-0">
+            <div className="min-w-0 flex-1">
               <div className="mb-2 flex items-center gap-2">
                 <span className="rounded-lg border border-[#4285f4]/20 bg-[#c3ecf6] px-2 py-0.5 text-xs font-medium text-[#4285f4]">
                   Reminder
@@ -112,7 +113,7 @@ const AnnouncementsPage = async () => {
             <div className="flex size-12 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[#ccf6c5] to-[#ccf6c5] dark:from-green-900/30 dark:to-green-800/30">
               <Bell className="size-6 text-[#34a853] dark:text-green-400" />
             </div>
-            <div className="flex-1 min-w-0">
+            <div className="min-w-0 flex-1">
               <div className="mb-2 flex items-center gap-2">
                 <span className="rounded-lg border border-[#34a853]/20 bg-[#ccf6c5] px-2 py-0.5 text-xs font-medium text-[#34a853]">
                   Info

@@ -86,4 +86,3 @@ export type Evaluation = {
   updatedAt: Date;
   createdAt: Date;
 };
-

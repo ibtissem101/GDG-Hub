@@ -102,7 +102,7 @@ Example:
 http.get('/api/projects', () => {
   // Add delay
   await new Promise(resolve => setTimeout(resolve, 1000));
-  
+
   // Return mock data
   return HttpResponse.json(projectsStore);
 }),

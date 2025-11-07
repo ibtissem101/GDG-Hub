@@ -1,4 +1,5 @@
 import { Background } from '@/components/Background';
+
 import { FeatureCard } from './FeatureCard';
 import { Section } from './Section';
 

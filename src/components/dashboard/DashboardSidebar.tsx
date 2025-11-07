@@ -1,30 +1,30 @@
 'use client';
 
-import Link from 'next/link';
-import Image from 'next/image';
-import { usePathname } from 'next/navigation';
-import { 
-  Home, 
-  Upload, 
-  FolderOpen, 
-  Award, 
-  Users, 
-  Settings,
-  Trophy,
-  FileText,
+import {
+  Award,
   ChevronLeft,
   ChevronRight,
+  FileText,
+  FolderOpen,
+  Home,
+  Settings,
+  Trophy,
+  Upload,
+  Users,
 } from 'lucide-react';
+import Image from 'next/image';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
-import { cn } from '@/utils/Helpers';
 import { UserRole } from '@/types/Enum';
+import { cn } from '@/utils/Helpers';
 
-interface SidebarLink {
+type SidebarLink = {
   href: string;
   label: string;
   icon: React.ComponentType<{ className?: string }>;
   roles?: UserRole[];
-}
+};
 
 const sidebarLinks: SidebarLink[] = [
   {
@@ -73,76 +73,85 @@ const sidebarLinks: SidebarLink[] = [
   },
 ];
 
-interface DashboardSidebarProps {
+type DashboardSidebarProps = {
   userRole?: UserRole;
   isCollapsed: boolean;
   onToggleAction: () => void;
-}
+};
 
 export function DashboardSidebar({ userRole, isCollapsed, onToggleAction }: DashboardSidebarProps) {
   const pathname = usePathname();
 
-  const filteredLinks = sidebarLinks.filter(link => {
-    if (!link.roles) return true;
-    if (!userRole) return false;
+  const filteredLinks = sidebarLinks.filter((link) => {
+    if (!link.roles) {
+      return true;
+    }
+    if (!userRole) {
+      return false;
+    }
     return link.roles.includes(userRole);
   });
 
   return (
     <aside className={cn(
-      "border-r border-border/40 bg-background transition-all duration-300 ease-in-out",
-      isCollapsed ? "w-20" : "w-64"
-    )}>
+      'border-r border-border/40 bg-background transition-all duration-300 ease-in-out',
+      isCollapsed ? 'w-20' : 'w-64',
+    )}
+    >
       <div className="flex h-full flex-col">
         {/* Logo + Toggle */}
-        <div className="border-b border-border/40 px-4 py-4">
+        <div className="border-b border-border/40 p-4">
           <div className="flex items-center gap-3">
             {/* Collapse Toggle on the left of the logo */}
             <button
               onClick={onToggleAction}
               className={cn(
-                "flex items-center justify-center rounded-lg border border-border/40 bg-background p-2 transition-all hover:bg-accent hover:shadow-sm",
-                isCollapsed ? "w-10" : ""
+                'flex items-center justify-center rounded-lg border border-border/40 bg-background p-2 transition-all hover:bg-accent hover:shadow-sm',
+                isCollapsed ? 'w-10' : '',
               )}
-              title={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+              title={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
             >
-              {isCollapsed ? (
-                <ChevronRight className="size-4 text-muted-foreground" />
-              ) : (
-                <ChevronLeft className="size-4 text-muted-foreground" />
-              )}
+              {isCollapsed
+                ? (
+                    <ChevronRight className="size-4 text-muted-foreground" />
+                  )
+                : (
+                    <ChevronLeft className="size-4 text-muted-foreground" />
+                  )}
             </button>
 
-            <Link href="/" className={cn("group flex items-center gap-3 transition-transform hover:scale-105", isCollapsed ? "justify-center w-full" : "") }>
-              {!isCollapsed ? (
-                <>
-                  <Image
-                    src="/assets/images/GDG LOGO.png"
-                    alt="GDG Logo"
-                    width={45}
-                    height={28}
-                  />
-                  <div>
-                    <h2 className="text-base font-bold leading-tight tracking-tight">
-                      <span className="text-[#4285F4]">G</span>
-                      <span className="text-[#EA4335]">D</span>
-                      <span className="text-[#FBBC04]">G</span>
-                      <span className="text-foreground"> Hackathon</span>
-                    </h2>
-                    <p className="text-xs font-semibold text-[#34A853]">
-                      Hub
-                    </p>
-                  </div>
-                </>
-              ) : (
-                <Image
-                  src="/assets/images/GDG LOGO.png"
-                  alt="GDG Logo"
-                  width={40}
-                  height={25}
-                  className="mx-auto"
-                />
-              )}
+            <Link href="/" className={cn('group flex items-center gap-3 transition-transform hover:scale-105', isCollapsed ? 'justify-center w-full' : '')}>
+              {!isCollapsed
+                ? (
+                    <>
+                      <Image
+                        src="/assets/images/GDG LOGO.png"
+                        alt="GDG Logo"
+                        width={45}
+                        height={28}
+                      />
+                      <div>
+                        <h2 className="text-base font-bold leading-tight tracking-tight">
+                          <span className="text-[#4285F4]">G</span>
+                          <span className="text-[#EA4335]">D</span>
+                          <span className="text-[#FBBC04]">G</span>
+                          <span className="text-foreground"> Hackathon</span>
+                        </h2>
+                        <p className="text-xs font-semibold text-[#34A853]">
+                          Hub
+                        </p>
+                      </div>
+                    </>
+                  )
+                : (
+                    <Image
+                      src="/assets/images/GDG LOGO.png"
+                      alt="GDG Logo"
+                      width={40}
+                      height={25}
+                      className="mx-auto"
+                    />
+                  )}
             </Link>
           </div>
         </div>
@@ -152,7 +161,7 @@ export function DashboardSidebar({ userRole, isCollapsed, onToggleAction }: Dash
           {filteredLinks.map((link) => {
             const Icon = link.icon;
             const isActive = pathname === link.href;
-            
+
             return (
               <Link
                 key={link.href}
@@ -162,14 +171,15 @@ export function DashboardSidebar({ userRole, isCollapsed, onToggleAction }: Dash
                   isCollapsed ? 'justify-center' : 'gap-3',
                   isActive
                     ? 'bg-primary text-primary-foreground shadow-sm'
-                    : 'text-muted-foreground hover:bg-accent/50 hover:text-foreground hover:shadow-sm'
+                    : 'text-muted-foreground hover:bg-accent/50 hover:text-foreground hover:shadow-sm',
                 )}
                 title={isCollapsed ? link.label : undefined}
               >
                 <Icon className={cn(
-                  "size-[18px] transition-transform duration-200",
-                  isActive ? "scale-110" : "group-hover:scale-110"
-                )} />
+                  'size-[18px] transition-transform duration-200',
+                  isActive ? 'scale-110' : 'group-hover:scale-110',
+                )}
+                />
                 {!isCollapsed && <span>{link.label}</span>}
               </Link>
             );

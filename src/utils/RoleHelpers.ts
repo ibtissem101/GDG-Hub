@@ -1,4 +1,4 @@
-import { UserRole, RolePermissions } from '@/types/Enum';
+import { RolePermissions, UserRole } from '@/types/Enum';
 
 /**
  * Check if a user has a specific role
@@ -14,7 +14,9 @@ export function hasAnyRole(
   userRole: string | null | undefined,
   roles: UserRole[],
 ): boolean {
-  if (!userRole) return false;
+  if (!userRole) {
+    return false;
+  }
   return roles.includes(userRole as UserRole);
 }
 
@@ -25,16 +27,22 @@ export function hasPermission(
   userRole: string | null | undefined,
   permission: string,
 ): boolean {
-  if (!userRole) return false;
-  
+  if (!userRole) {
+    return false;
+  }
+
   const role = userRole as UserRole;
   const permissions = RolePermissions[role];
-  
-  if (!permissions) return false;
-  
+
+  if (!permissions) {
+    return false;
+  }
+
   // Admin has all permissions
-  if (role === UserRole.ADMIN) return true;
-  
+  if (role === UserRole.ADMIN) {
+    return true;
+  }
+
   return (permissions as readonly string[]).includes(permission);
 }
 
@@ -75,7 +83,9 @@ export function isAtLeast(
   userRole: string | null | undefined,
   minRole: UserRole,
 ): boolean {
-  if (!userRole) return false;
+  if (!userRole) {
+    return false;
+  }
 
   const roleHierarchy: Record<UserRole, number> = {
     [UserRole.PARTICIPANT]: 1,
@@ -101,8 +111,10 @@ export function getRolePermissions(role: UserRole): readonly string[] {
  * Format role name for display
  */
 export function formatRoleName(role: string | null | undefined): string {
-  if (!role) return 'No Role';
-  
+  if (!role) {
+    return 'No Role';
+  }
+
   return role
     .split('_')
     .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())

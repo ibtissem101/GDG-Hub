@@ -1,5 +1,3 @@
-import { fileURLToPath } from 'node:url';
-
 import withBundleAnalyzer from '@next/bundle-analyzer';
 
 const bundleAnalyzer = withBundleAnalyzer({

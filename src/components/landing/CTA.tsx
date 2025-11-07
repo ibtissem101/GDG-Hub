@@ -2,6 +2,7 @@ import { RocketIcon } from '@radix-ui/react-icons';
 import Link from 'next/link';
 
 import { buttonVariants } from '@/components/ui/buttonVariants';
+
 import { CTABanner } from './CTABanner';
 import { Section } from './Section';
 

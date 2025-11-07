@@ -26,7 +26,7 @@ const SettingsPage = async () => {
           <h2 className="mb-4 text-xl font-bold">Profile Information</h2>
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium mb-2">Full Name</label>
+              <label className="mb-2 block text-sm font-medium">Full Name</label>
               <input
                 type="text"
                 className="w-full rounded-lg border border-border bg-background px-4 py-2"
@@ -34,7 +34,7 @@ const SettingsPage = async () => {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium mb-2">Email</label>
+              <label className="mb-2 block text-sm font-medium">Email</label>
               <input
                 type="email"
                 className="w-full rounded-lg border border-border bg-background px-4 py-2"
@@ -46,7 +46,7 @@ const SettingsPage = async () => {
               </p>
             </div>
             <div>
-              <label className="block text-sm font-medium mb-2">Bio</label>
+              <label className="mb-2 block text-sm font-medium">Bio</label>
               <textarea
                 rows={3}
                 className="w-full rounded-lg border border-border bg-background px-4 py-2"
@@ -80,7 +80,7 @@ const SettingsPage = async () => {
           <h2 className="mb-4 text-xl font-bold">Social Links</h2>
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium mb-2">GitHub</label>
+              <label className="mb-2 block text-sm font-medium">GitHub</label>
               <input
                 type="url"
                 className="w-full rounded-lg border border-border bg-background px-4 py-2"
@@ -88,7 +88,7 @@ const SettingsPage = async () => {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium mb-2">LinkedIn</label>
+              <label className="mb-2 block text-sm font-medium">LinkedIn</label>
               <input
                 type="url"
                 className="w-full rounded-lg border border-border bg-background px-4 py-2"
@@ -96,7 +96,7 @@ const SettingsPage = async () => {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium mb-2">Twitter/X</label>
+              <label className="mb-2 block text-sm font-medium">Twitter/X</label>
               <input
                 type="url"
                 className="w-full rounded-lg border border-border bg-background px-4 py-2"

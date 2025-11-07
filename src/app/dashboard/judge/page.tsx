@@ -1,18 +1,16 @@
-import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
-import { UserRole } from '@/types/Enum';
+import { DashboardLayout } from "@/components/dashboard/DashboardLayout";
+import { UserRole } from "@/types/Enum";
 
 export async function generateMetadata() {
   return {
-    title: 'Judge Panel - GDG Hackathon Hub',
-    description: 'Evaluate hackathon projects',
+    title: "Judge Panel - GDG Hackathon Hub",
+    description: "Evaluate hackathon projects",
   };
 }
 
-const JudgePanelPage = async () => {
-  const userRole = UserRole.JUDGE;
-
+export default function JudgePanelPage() {
   return (
-    <DashboardLayout userRole={userRole}>
+    <DashboardLayout requiredRoles={[UserRole.JUDGE, UserRole.ADMIN]}>
       <div className="mb-8">
         <h1 className="text-3xl font-bold">Evaluate Projects</h1>
         <p className="mt-2 text-muted-foreground">
@@ -58,7 +56,9 @@ const JudgePanelPage = async () => {
               />
             </svg>
           </div>
-          <h3 className="mb-2 text-xl font-semibold">No projects assigned yet</h3>
+          <h3 className="mb-2 text-xl font-semibold">
+            No projects assigned yet
+          </h3>
           <p className="text-muted-foreground">
             The organizer will assign projects for you to evaluate
           </p>
@@ -66,6 +66,4 @@ const JudgePanelPage = async () => {
       </div>
     </DashboardLayout>
   );
-};
-
-export default JudgePanelPage;
+}

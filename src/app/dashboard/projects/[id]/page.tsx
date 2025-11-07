@@ -1,13 +1,14 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useRouter, useParams } from 'next/navigation';
+import { Calendar, Edit, ExternalLink, FileText, Github, Plus, Tag, Trash2, Users, Video, X } from 'lucide-react';
 import Link from 'next/link';
+import { useParams, useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { UserRole } from '@/types/Enum';
-import { ExternalLink, Github, Video, FileText, Users, Edit, Trash2, Plus, X, Calendar, Tag } from 'lucide-react';
 
-interface Project {
+type Project = {
   id: number;
   userId: string;
   hackathonId: string;
@@ -26,9 +27,9 @@ interface Project {
   submittedAt?: string | null;
   updatedAt: string;
   createdAt: string;
-}
+};
 
-interface TeamMember {
+type TeamMember = {
   id: number;
   projectId: number;
   userId?: string | null;
@@ -38,26 +39,26 @@ interface TeamMember {
   isLeader: boolean;
   createdAt: string;
   updatedAt: string;
-}
+};
 
 const ProjectDetailPage = () => {
   const router = useRouter();
   const params = useParams();
   const projectId = params.id as string;
-  
+
   const [user, setUser] = useState<{ email: string; name: string } | null>(null);
   const [project, setProject] = useState<Project | null>(null);
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
   const [loading, setLoading] = useState(true);
   const [showAddMember, setShowAddMember] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-  
+
   // Team member form state
   const [memberName, setMemberName] = useState('');
   const [memberEmail, setMemberEmail] = useState('');
   const [memberRole, setMemberRole] = useState('');
   const [isAddingMember, setIsAddingMember] = useState(false);
-  
+
   const userRole = UserRole.PARTICIPANT;
 
   useEffect(() => {
@@ -67,7 +68,7 @@ const ProjectDetailPage = () => {
       return;
     }
     setUser(JSON.parse(userData));
-    
+
     // Fetch project details and team members
     const fetchData = async () => {
       try {
@@ -78,7 +79,7 @@ const ProjectDetailPage = () => {
         }
         const projectData = await projectRes.json();
         setProject(projectData);
-        
+
         // Fetch team members
         const teamRes = await fetch(`/api/projects/${projectId}/team`);
         const teamData = await teamRes.json();
@@ -90,14 +91,16 @@ const ProjectDetailPage = () => {
         setLoading(false);
       }
     };
-    
+
     fetchData();
   }, [projectId, router]);
 
   const handleAddTeamMember = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!memberName.trim() || !memberEmail.trim()) return;
-    
+    if (!memberName.trim() || !memberEmail.trim()) {
+      return;
+    }
+
     setIsAddingMember(true);
     try {
       const res = await fetch(`/api/projects/${projectId}/team`, {
@@ -236,11 +239,11 @@ const ProjectDetailPage = () => {
 
       <div className="grid gap-6 lg:grid-cols-3">
         {/* Main Content */}
-        <div className="lg:col-span-2 space-y-6">
+        <div className="space-y-6 lg:col-span-2">
           {/* Description */}
           <div className="rounded-2xl border border-border/40 bg-card/50 p-6 shadow-sm backdrop-blur-sm">
             <h2 className="mb-4 text-lg font-bold">Description</h2>
-            <p className="text-sm text-muted-foreground leading-relaxed">{project.description}</p>
+            <p className="text-sm leading-relaxed text-muted-foreground">{project.description}</p>
           </div>
 
           {/* Problem & Solution */}
@@ -385,7 +388,7 @@ const ProjectDetailPage = () => {
                   <input
                     type="text"
                     value={memberName}
-                    onChange={(e) => setMemberName(e.target.value)}
+                    onChange={e => setMemberName(e.target.value)}
                     placeholder="Member name *"
                     required
                     className="w-full rounded-lg border border-border/40 bg-background px-3 py-2 text-sm transition-colors focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
@@ -393,7 +396,7 @@ const ProjectDetailPage = () => {
                   <input
                     type="email"
                     value={memberEmail}
-                    onChange={(e) => setMemberEmail(e.target.value)}
+                    onChange={e => setMemberEmail(e.target.value)}
                     placeholder="Member email *"
                     required
                     className="w-full rounded-lg border border-border/40 bg-background px-3 py-2 text-sm transition-colors focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
@@ -401,7 +404,7 @@ const ProjectDetailPage = () => {
                   <input
                     type="text"
                     value={memberRole}
-                    onChange={(e) => setMemberRole(e.target.value)}
+                    onChange={e => setMemberRole(e.target.value)}
                     placeholder="Role (optional)"
                     className="w-full rounded-lg border border-border/40 bg-background px-3 py-2 text-sm transition-colors focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
                   />
@@ -418,39 +421,41 @@ const ProjectDetailPage = () => {
 
             {/* Team Members List */}
             <div className="space-y-2">
-              {teamMembers.length === 0 ? (
-                <p className="py-8 text-center text-sm text-muted-foreground">No team members yet</p>
-              ) : (
-                teamMembers.map((member) => (
-                  <div
-                    key={member.id}
-                    className="flex items-start justify-between rounded-lg border border-border p-3"
-                  >
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2">
-                        <p className="text-sm font-medium">{member.name}</p>
-                        {member.isLeader && (
-                          <span className="rounded bg-[#f9ab00]/10 px-2 py-0.5 text-xs font-medium text-[#f9ab00]">
-                            Leader
-                          </span>
+              {teamMembers.length === 0
+                ? (
+                    <p className="py-8 text-center text-sm text-muted-foreground">No team members yet</p>
+                  )
+                : (
+                    teamMembers.map(member => (
+                      <div
+                        key={member.id}
+                        className="flex items-start justify-between rounded-lg border border-border p-3"
+                      >
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2">
+                            <p className="text-sm font-medium">{member.name}</p>
+                            {member.isLeader && (
+                              <span className="rounded bg-[#f9ab00]/10 px-2 py-0.5 text-xs font-medium text-[#f9ab00]">
+                                Leader
+                              </span>
+                            )}
+                          </div>
+                          <p className="text-xs text-muted-foreground">{member.email}</p>
+                          {member.role && (
+                            <p className="mt-1 text-xs text-muted-foreground">{member.role}</p>
+                          )}
+                        </div>
+                        {isOwner && !member.isLeader && (
+                          <button
+                            onClick={() => handleRemoveTeamMember(member.id)}
+                            className="text-red-500 hover:text-red-700 dark:text-red-400"
+                          >
+                            <X className="size-4" />
+                          </button>
                         )}
                       </div>
-                      <p className="text-xs text-muted-foreground">{member.email}</p>
-                      {member.role && (
-                        <p className="mt-1 text-xs text-muted-foreground">{member.role}</p>
-                      )}
-                    </div>
-                    {isOwner && !member.isLeader && (
-                      <button
-                        onClick={() => handleRemoveTeamMember(member.id)}
-                        className="text-red-500 hover:text-red-700 dark:text-red-400"
-                      >
-                        <X className="size-4" />
-                      </button>
-                    )}
-                  </div>
-                ))
-              )}
+                    ))
+                  )}
             </div>
           </div>
         </div>
@@ -462,7 +467,9 @@ const ProjectDetailPage = () => {
           <div className="w-full max-w-md rounded-2xl border border-border bg-card p-6 shadow-lg">
             <h3 className="mb-4 text-lg font-bold">Delete Project?</h3>
             <p className="mb-6 text-sm text-muted-foreground">
-              Are you sure you want to delete "{project.name}"? This action cannot be undone.
+              Are you sure you want to delete "
+              {project.name}
+              "? This action cannot be undone.
             </p>
             <div className="flex gap-3">
               <button

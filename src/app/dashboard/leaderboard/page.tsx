@@ -1,11 +1,12 @@
 'use client';
 
+import { Award, Medal, Search, Trophy } from 'lucide-react';
 import { useEffect, useState } from 'react';
+
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { UserRole } from '@/types/Enum';
-import { Trophy, Medal, Award, Search } from 'lucide-react';
 
-interface LeaderboardEntry {
+type LeaderboardEntry = {
   rank: number;
   projectId: number;
   projectName: string;
@@ -13,7 +14,7 @@ interface LeaderboardEntry {
   category: string;
   averageScore: number;
   evaluationCount: number;
-}
+};
 
 const LeaderboardPage = () => {
   const userRole = UserRole.PARTICIPANT;
@@ -39,11 +40,11 @@ const LeaderboardPage = () => {
   }, []);
 
   const categories = ['All', ...new Set(leaderboard.map(item => item.category))];
-  
-  const filteredLeaderboard = leaderboard.filter(item => {
-    const matchesSearch = searchTerm === '' || 
-      item.projectName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.team.toLowerCase().includes(searchTerm.toLowerCase());
+
+  const filteredLeaderboard = leaderboard.filter((item) => {
+    const matchesSearch = searchTerm === ''
+      || item.projectName.toLowerCase().includes(searchTerm.toLowerCase())
+      || item.team.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesCategory = selectedCategory === 'All' || item.category === selectedCategory;
     return matchesSearch && matchesCategory;
   });
@@ -92,7 +93,7 @@ const LeaderboardPage = () => {
       <DashboardLayout userRole={userRole}>
         <div className="flex h-64 items-center justify-center">
           <div className="text-center">
-            <div className="text-4xl mb-4">🏆</div>
+            <div className="mb-4 text-4xl">🏆</div>
             <div>Loading leaderboard...</div>
           </div>
         </div>
@@ -125,7 +126,7 @@ const LeaderboardPage = () => {
             {category}
           </button>
         ))}
-        
+
         <div className="ml-auto flex items-center gap-2">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
@@ -133,7 +134,7 @@ const LeaderboardPage = () => {
               type="search"
               placeholder="Search project or team..."
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={e => setSearchTerm(e.target.value)}
               className="w-64 rounded-xl border border-border/40 bg-background py-2 pl-9 pr-4 text-sm transition-colors focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
             />
           </div>
@@ -142,61 +143,63 @@ const LeaderboardPage = () => {
 
       {/* Leaderboard Table */}
       <div className="rounded-2xl border border-border/40 bg-card/50 shadow-sm backdrop-blur-sm">
-        {filteredLeaderboard.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-16">
-            <div className="text-6xl mb-4">🏆</div>
-            <h3 className="text-lg font-semibold mb-2">No Rankings Yet</h3>
-            <p className="text-sm text-muted-foreground">
-              {searchTerm || selectedCategory !== 'All' 
-                ? 'No projects match your filters' 
-                : 'Projects will appear here once they are evaluated'}
-            </p>
-          </div>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="border-b border-border/40">
-                <tr className="text-left text-sm text-muted-foreground">
-                  <th className="px-6 py-4 font-medium">RANK</th>
-                  <th className="px-6 py-4 font-medium">PROJECT</th>
-                  <th className="px-6 py-4 font-medium">CATEGORY</th>
-                  <th className="px-6 py-4 font-medium text-center">EVALUATIONS</th>
-                  <th className="px-6 py-4 font-medium text-right">SCORE</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border/40">
-                {filteredLeaderboard.map((entry) => (
-                  <tr key={entry.projectId} className="group transition-colors hover:bg-accent/30">
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-2">
-                        {getRankIcon(entry.rank)}
-                        <span className="text-sm font-bold">{entry.rank}</span>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div>
-                        <p className="font-semibold">{entry.projectName}</p>
-                        <p className="text-sm text-muted-foreground">{entry.team}</p>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <span className={`inline-flex rounded-lg border px-2.5 py-1 text-xs font-medium ${getCategoryBadgeColor(entry.category)}`}>
-                        {entry.category}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 text-center">
-                      <span className="text-sm text-muted-foreground">{entry.evaluationCount}</span>
-                    </td>
-                    <td className="px-6 py-4 text-right">
-                      <span className="text-lg font-bold">{entry.averageScore.toFixed(1)}</span>
-                      <span className="text-sm text-muted-foreground ml-1">/50</span>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
+        {filteredLeaderboard.length === 0
+          ? (
+              <div className="flex flex-col items-center justify-center py-16">
+                <div className="mb-4 text-6xl">🏆</div>
+                <h3 className="mb-2 text-lg font-semibold">No Rankings Yet</h3>
+                <p className="text-sm text-muted-foreground">
+                  {searchTerm || selectedCategory !== 'All'
+                    ? 'No projects match your filters'
+                    : 'Projects will appear here once they are evaluated'}
+                </p>
+              </div>
+            )
+          : (
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead className="border-b border-border/40">
+                    <tr className="text-left text-sm text-muted-foreground">
+                      <th className="px-6 py-4 font-medium">RANK</th>
+                      <th className="px-6 py-4 font-medium">PROJECT</th>
+                      <th className="px-6 py-4 font-medium">CATEGORY</th>
+                      <th className="px-6 py-4 text-center font-medium">EVALUATIONS</th>
+                      <th className="px-6 py-4 text-right font-medium">SCORE</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-border/40">
+                    {filteredLeaderboard.map(entry => (
+                      <tr key={entry.projectId} className="group transition-colors hover:bg-accent/30">
+                        <td className="px-6 py-4">
+                          <div className="flex items-center gap-2">
+                            {getRankIcon(entry.rank)}
+                            <span className="text-sm font-bold">{entry.rank}</span>
+                          </div>
+                        </td>
+                        <td className="px-6 py-4">
+                          <div>
+                            <p className="font-semibold">{entry.projectName}</p>
+                            <p className="text-sm text-muted-foreground">{entry.team}</p>
+                          </div>
+                        </td>
+                        <td className="px-6 py-4">
+                          <span className={`inline-flex rounded-lg border px-2.5 py-1 text-xs font-medium ${getCategoryBadgeColor(entry.category)}`}>
+                            {entry.category}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4 text-center">
+                          <span className="text-sm text-muted-foreground">{entry.evaluationCount}</span>
+                        </td>
+                        <td className="px-6 py-4 text-right">
+                          <span className="text-lg font-bold">{entry.averageScore.toFixed(1)}</span>
+                          <span className="ml-1 text-sm text-muted-foreground">/50</span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
       </div>
     </DashboardLayout>
   );

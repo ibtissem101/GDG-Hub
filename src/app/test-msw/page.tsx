@@ -12,30 +12,20 @@ export default function TestMSWPage() {
   useEffect(() => {
     async function fetchData() {
       try {
-        console.log('🧪 Testing MSW API calls...');
-        
         // Test 1: Fetch projects
-        console.log('📡 Fetching /api/projects...');
         const projectsRes = await fetch('/api/projects');
         const projectsData = await projectsRes.json();
-        console.log('✅ Projects received:', projectsData);
         setProjects(projectsData);
 
         // Test 2: Fetch leaderboard
-        console.log('📡 Fetching /api/leaderboard...');
         const leaderboardRes = await fetch('/api/leaderboard');
         const leaderboardData = await leaderboardRes.json();
-        console.log('✅ Leaderboard received:', leaderboardData);
         setLeaderboard(leaderboardData);
 
         // Test 3: Fetch organizer stats
-        console.log('📡 Fetching /api/organizer/stats...');
         const statsRes = await fetch('/api/organizer/stats');
         const statsData = await statsRes.json();
-        console.log('✅ Stats received:', statsData);
         setStats(statsData);
-
-        console.log('🎉 All MSW tests passed!');
         setLoading(false);
       } catch (err) {
         console.error('❌ MSW test failed:', err);
@@ -53,9 +43,9 @@ export default function TestMSWPage() {
     return (
       <div className="flex min-h-screen items-center justify-center">
         <div className="text-center">
-          <div className="text-4xl mb-4">🧪</div>
+          <div className="mb-4 text-4xl">🧪</div>
           <div className="text-lg">Testing MSW API...</div>
-          <div className="text-sm text-muted-foreground mt-2">Check the console</div>
+          <div className="mt-2 text-sm text-muted-foreground">Check the console</div>
         </div>
       </div>
     );
@@ -65,9 +55,9 @@ export default function TestMSWPage() {
     return (
       <div className="flex min-h-screen items-center justify-center">
         <div className="max-w-2xl rounded-lg border border-red-500 bg-red-50 p-6 text-center">
-          <div className="text-4xl mb-4">❌</div>
+          <div className="mb-4 text-4xl">❌</div>
           <div className="text-lg font-bold text-red-600">MSW Test Failed</div>
-          <div className="text-sm text-red-500 mt-2">{error}</div>
+          <div className="mt-2 text-sm text-red-500">{error}</div>
         </div>
       </div>
     );
@@ -77,20 +67,20 @@ export default function TestMSWPage() {
     <div className="min-h-screen bg-gradient-to-br from-[#f0f0f0] via-white to-[#f0f0f0] p-8">
       <div className="mx-auto max-w-6xl">
         <div className="mb-8 text-center">
-          <div className="text-6xl mb-4">🎉</div>
-          <h1 className="text-4xl font-bold mb-2">MSW is Working!</h1>
+          <div className="mb-4 text-6xl">🎉</div>
+          <h1 className="mb-2 text-4xl font-bold">MSW is Working!</h1>
           <p className="text-muted-foreground">Mock Service Worker is successfully intercepting API calls</p>
         </div>
 
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {/* Projects Card */}
           <div className="rounded-lg border bg-white p-6 shadow-sm">
-            <h2 className="text-xl font-bold mb-4 text-[#4285F4]">📁 Projects</h2>
-            <p className="text-3xl font-bold mb-2">{projects.length}</p>
+            <h2 className="mb-4 text-xl font-bold text-[#4285F4]">📁 Projects</h2>
+            <p className="mb-2 text-3xl font-bold">{projects.length}</p>
             <p className="text-sm text-muted-foreground">Mock projects loaded</p>
             <div className="mt-4 space-y-2">
-              {projects.slice(0, 3).map((p) => (
-                <div key={p.id} className="text-xs border-l-2 border-[#4285F4] pl-2">
+              {projects.slice(0, 3).map(p => (
+                <div key={p.id} className="border-l-2 border-[#4285F4] pl-2 text-xs">
                   {p.name}
                 </div>
               ))}
@@ -99,13 +89,20 @@ export default function TestMSWPage() {
 
           {/* Leaderboard Card */}
           <div className="rounded-lg border bg-white p-6 shadow-sm">
-            <h2 className="text-xl font-bold mb-4 text-[#EA4335]">🏆 Leaderboard</h2>
-            <p className="text-3xl font-bold mb-2">{leaderboard.length}</p>
+            <h2 className="mb-4 text-xl font-bold text-[#EA4335]">🏆 Leaderboard</h2>
+            <p className="mb-2 text-3xl font-bold">{leaderboard.length}</p>
             <p className="text-sm text-muted-foreground">Ranked projects</p>
             <div className="mt-4 space-y-2">
-              {leaderboard.slice(0, 3).map((item) => (
-                <div key={item.projectId} className="text-xs border-l-2 border-[#EA4335] pl-2">
-                  #{item.rank} {item.projectName} - {item.averageScore}
+              {leaderboard.slice(0, 3).map(item => (
+                <div key={item.projectId} className="border-l-2 border-[#EA4335] pl-2 text-xs">
+                  #
+                  {item.rank}
+                  {' '}
+                  {item.projectName}
+                  {' '}
+                  -
+                  {' '}
+                  {item.averageScore}
                 </div>
               ))}
             </div>
@@ -113,7 +110,7 @@ export default function TestMSWPage() {
 
           {/* Stats Card */}
           <div className="rounded-lg border bg-white p-6 shadow-sm">
-            <h2 className="text-xl font-bold mb-4 text-[#34A853]">📊 Stats</h2>
+            <h2 className="mb-4 text-xl font-bold text-[#34A853]">📊 Stats</h2>
             {stats && (
               <>
                 <div className="space-y-2 text-sm">
@@ -140,15 +137,25 @@ export default function TestMSWPage() {
         </div>
 
         <div className="mt-8 rounded-lg border bg-white p-6 shadow-sm">
-          <h2 className="text-xl font-bold mb-4">📝 Test Results</h2>
-          <div className="space-y-2 text-sm font-mono">
+          <h2 className="mb-4 text-xl font-bold">📝 Test Results</h2>
+          <div className="space-y-2 font-mono text-sm">
             <div className="flex items-center gap-2">
               <span className="text-green-500">✓</span>
-              <span>GET /api/projects - {projects.length} projects</span>
+              <span>
+                GET /api/projects -
+                {projects.length}
+                {' '}
+                projects
+              </span>
             </div>
             <div className="flex items-center gap-2">
               <span className="text-green-500">✓</span>
-              <span>GET /api/leaderboard - {leaderboard.length} entries</span>
+              <span>
+                GET /api/leaderboard -
+                {leaderboard.length}
+                {' '}
+                entries
+              </span>
             </div>
             <div className="flex items-center gap-2">
               <span className="text-green-500">✓</span>
@@ -156,8 +163,8 @@ export default function TestMSWPage() {
             </div>
           </div>
           <div className="mt-4 rounded bg-gray-100 p-4 text-xs">
-            <p className="font-bold mb-2">💡 Next Steps:</p>
-            <ul className="list-disc list-inside space-y-1 text-muted-foreground">
+            <p className="mb-2 font-bold">💡 Next Steps:</p>
+            <ul className="list-inside list-disc space-y-1 text-muted-foreground">
               <li>Open browser DevTools Console to see MSW logs</li>
               <li>Check Network tab - requests are intercepted by MSW</li>
               <li>See API_ROUTES.md for all available endpoints</li>

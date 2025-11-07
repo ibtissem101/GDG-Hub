@@ -2,7 +2,8 @@ export const AppConfig = {
   name: 'GDG Hackathon Hub',
   description: 'A centralized platform for hackathon project submissions, evaluation, and archiving',
   locale: 'en',
-  
+  defaultLocale: 'en',
+
   // Hackathon Settings
   currentHackathonId: 'gdg-2025-fall',
   currentHackathonName: 'GDG Fall Hackathon 2025',

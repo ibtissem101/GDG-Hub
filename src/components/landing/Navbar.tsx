@@ -1,10 +1,10 @@
 import Link from 'next/link';
 
 import { buttonVariants } from '@/components/ui/buttonVariants';
-import { CenteredMenu } from './CenteredMenu';
-import { Section } from './Section';
 
+import { CenteredMenu } from './CenteredMenu';
 import { Logo } from './Logo';
+import { Section } from './Section';
 
 export const Navbar = () => {
   return (

@@ -3,9 +3,10 @@ import Link from 'next/link';
 
 import { badgeVariants } from '@/components/ui/badgeVariants';
 import { buttonVariants } from '@/components/ui/buttonVariants';
+import { AppConfig } from '@/utils/AppConfig';
+
 import { CenteredHero } from './CenteredHero';
 import { Section } from './Section';
-import { AppConfig } from '@/utils/AppConfig';
 
 export const Hero = () => {
   return (

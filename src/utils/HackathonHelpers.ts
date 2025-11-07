@@ -26,8 +26,9 @@ export function calculateTotalScore(evaluation: Partial<Evaluation>): number {
  * Calculate average score for a project from multiple evaluations
  */
 export function calculateAverageScore(evaluations: Evaluation[]): number {
-  if (evaluations.length === 0)
+  if (evaluations.length === 0) {
     return 0;
+  }
 
   const totalScore = evaluations.reduce(
     (sum, evaluation) => sum + evaluation.totalScore,
@@ -287,8 +288,7 @@ export function validateEvaluationScores(evaluation: Partial<Evaluation>): {
   Object.entries(scores).forEach(([key, value]) => {
     if (value === undefined || value === null) {
       errors.push(`${key} is required`);
-    }
-    else if (value < 0 || value > 10) {
+    } else if (value < 0 || value > 10) {
       errors.push(`${key} must be between 0 and 10`);
     }
   });

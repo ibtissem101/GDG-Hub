@@ -3,7 +3,7 @@ export async function initMocks() {
   if (typeof window === 'undefined') {
     // Server-side (Next.js SSR)
     const { server } = await import('./server');
-    server.listen({ 
+    server.listen({
       onUnhandledRequest: 'bypass',
     });
     console.log('🎭 [MSW] Server-side mocking enabled');

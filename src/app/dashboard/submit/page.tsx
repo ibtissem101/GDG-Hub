@@ -1,16 +1,17 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { X } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { UserRole } from '@/types/Enum';
-import { X } from 'lucide-react';
 
 const SubmitProjectPage = () => {
   const router = useRouter();
   const [user, setUser] = useState<{ email: string; name: string } | null>(null);
   const userRole = UserRole.PARTICIPANT;
-  
+
   // Form state
   const [projectTitle, setProjectTitle] = useState('');
   const [projectDescription, setProjectDescription] = useState('');
@@ -56,10 +57,10 @@ const SubmitProjectPage = () => {
 
   const addTeamMember = () => {
     if (memberName.trim() && memberEmail.trim()) {
-      setTeamMembers([...teamMembers, { 
-        name: memberName.trim(), 
+      setTeamMembers([...teamMembers, {
+        name: memberName.trim(),
         email: memberEmail.trim(),
-        role: memberRole.trim() || 'Team Member'
+        role: memberRole.trim() || 'Team Member',
       }]);
       setMemberName('');
       setMemberEmail('');
@@ -88,7 +89,7 @@ const SubmitProjectPage = () => {
         demoUrl: demoLink || null,
         videoUrl: videoLink || null,
         presentationUrl: presentationLink || null,
-        technologies: technologies,
+        technologies,
         category: category || null,
         status: isDraft ? 'draft' : 'submitted',
         isPublic: true,
@@ -128,7 +129,7 @@ const SubmitProjectPage = () => {
       }
 
       setSubmitStatus('success');
-      
+
       // Redirect to dashboard after 2 seconds
       setTimeout(() => {
         router.push('/dashboard');
@@ -142,7 +143,7 @@ const SubmitProjectPage = () => {
   };
 
   return (
-    <DashboardLayout userRole={userRole} userEmail={user.email} userName={user.name}>
+    <DashboardLayout requiredRoles={[UserRole.PARTICIPANT, UserRole.ADMIN]} userRole={userRole} userEmail={user.email} userName={user.name}>
       <div className="mb-6">
         <h1 className="text-2xl font-bold tracking-tight">Submit Your Project</h1>
         <p className="mt-1 text-sm text-muted-foreground">
@@ -163,11 +164,11 @@ const SubmitProjectPage = () => {
       )}
 
       <div className="mx-auto max-w-3xl">
-        <form className="space-y-8" onSubmit={(e) => handleSubmit(e, false)}>
+        <form className="space-y-8" onSubmit={e => handleSubmit(e, false)}>
           {/* Project Information Section */}
           <div className="rounded-2xl border border-border/40 bg-card/50 p-6 shadow-sm backdrop-blur-sm">
             <h2 className="mb-6 text-base font-bold">Project Information</h2>
-            
+
             <div className="space-y-5">
               {/* Project Title */}
               <div>
@@ -178,7 +179,7 @@ const SubmitProjectPage = () => {
                   type="text"
                   id="projectTitle"
                   value={projectTitle}
-                  onChange={(e) => setProjectTitle(e.target.value)}
+                  onChange={e => setProjectTitle(e.target.value)}
                   required
                   className="w-full rounded-xl border border-border/40 bg-background px-4 py-2.5 text-sm transition-colors focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
                   placeholder="Enter your project title"
@@ -194,7 +195,7 @@ const SubmitProjectPage = () => {
                   id="projectDescription"
                   rows={5}
                   value={projectDescription}
-                  onChange={(e) => setProjectDescription(e.target.value)}
+                  onChange={e => setProjectDescription(e.target.value)}
                   required
                   className="w-full rounded-xl border border-border/40 bg-background px-4 py-2.5 text-sm transition-colors focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
                   placeholder="Describe your project, the problem it solves, and the technology used."
@@ -210,7 +211,7 @@ const SubmitProjectPage = () => {
                   id="problemStatement"
                   rows={3}
                   value={problemStatement}
-                  onChange={(e) => setProblemStatement(e.target.value)}
+                  onChange={e => setProblemStatement(e.target.value)}
                   className="w-full rounded-xl border border-border/40 bg-background px-4 py-2.5 text-sm transition-colors focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
                   placeholder="What problem does your project solve?"
                 />
@@ -225,7 +226,7 @@ const SubmitProjectPage = () => {
                   id="solution"
                   rows={3}
                   value={solution}
-                  onChange={(e) => setSolution(e.target.value)}
+                  onChange={e => setSolution(e.target.value)}
                   className="w-full rounded-xl border border-border/40 bg-background px-4 py-2.5 text-sm transition-colors focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
                   placeholder="How does your project solve the problem?"
                 />
@@ -239,7 +240,7 @@ const SubmitProjectPage = () => {
                 <select
                   id="category"
                   value={category}
-                  onChange={(e) => setCategory(e.target.value)}
+                  onChange={e => setCategory(e.target.value)}
                   className="w-full rounded-xl border border-border/40 bg-background px-4 py-2.5 text-sm transition-colors focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
                 >
                   <option value="">Select a category</option>
@@ -262,8 +263,8 @@ const SubmitProjectPage = () => {
                     type="text"
                     id="technologies"
                     value={techInput}
-                    onChange={(e) => setTechInput(e.target.value)}
-                    onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addTechnology())}
+                    onChange={e => setTechInput(e.target.value)}
+                    onKeyPress={e => e.key === 'Enter' && (e.preventDefault(), addTechnology())}
                     className="flex-1 rounded-xl border border-border/40 bg-background px-4 py-2.5 text-sm transition-colors focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
                     placeholder="Add technology and press Enter"
                   />
@@ -301,27 +302,27 @@ const SubmitProjectPage = () => {
           {/* Team Section */}
           <div className="rounded-2xl border border-border/40 bg-card/50 p-6 shadow-sm backdrop-blur-sm">
             <h2 className="mb-6 text-base font-bold">Team Members</h2>
-            
+
             <div className="space-y-5">
               <div className="grid gap-3 md:grid-cols-3">
                 <input
                   type="text"
                   value={memberName}
-                  onChange={(e) => setMemberName(e.target.value)}
+                  onChange={e => setMemberName(e.target.value)}
                   className="rounded-xl border border-border/40 bg-background px-4 py-2.5 text-sm transition-colors focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
                   placeholder="Member name"
                 />
                 <input
                   type="email"
                   value={memberEmail}
-                  onChange={(e) => setMemberEmail(e.target.value)}
+                  onChange={e => setMemberEmail(e.target.value)}
                   className="rounded-xl border border-border/40 bg-background px-4 py-2.5 text-sm transition-colors focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
                   placeholder="Member email"
                 />
                 <input
                   type="text"
                   value={memberRole}
-                  onChange={(e) => setMemberRole(e.target.value)}
+                  onChange={e => setMemberRole(e.target.value)}
                   className="rounded-xl border border-border/40 bg-background px-4 py-2.5 text-sm transition-colors focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
                   placeholder="Role (optional)"
                 />
@@ -333,7 +334,7 @@ const SubmitProjectPage = () => {
               >
                 + Add Team Member
               </button>
-              
+
               {/* Team Member Tags */}
               {teamMembers.length > 0 && (
                 <div className="flex flex-wrap gap-2">
@@ -342,7 +343,11 @@ const SubmitProjectPage = () => {
                       key={index}
                       className="inline-flex items-center gap-2 rounded-lg border border-blue-200 bg-blue-50 px-3 py-1.5 text-sm text-blue-700 dark:border-blue-800 dark:bg-blue-950 dark:text-blue-300"
                     >
-                      {member.name} ({member.email})
+                      {member.name}
+                      {' '}
+                      (
+                      {member.email}
+                      )
                       <button
                         type="button"
                         onClick={() => removeTeamMember(index)}
@@ -360,7 +365,7 @@ const SubmitProjectPage = () => {
           {/* Links & Resources Section */}
           <div className="rounded-2xl border border-border/40 bg-card/50 p-6 shadow-sm backdrop-blur-sm">
             <h2 className="mb-6 text-base font-bold">Links & Resources</h2>
-            
+
             <div className="space-y-5">
               {/* Code Repository Link */}
               <div>
@@ -371,7 +376,7 @@ const SubmitProjectPage = () => {
                   type="url"
                   id="repoLink"
                   value={repoLink}
-                  onChange={(e) => setRepoLink(e.target.value)}
+                  onChange={e => setRepoLink(e.target.value)}
                   required
                   className="w-full rounded-xl border border-border/40 bg-background px-4 py-2.5 text-sm transition-colors focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
                   placeholder="https://github.com/your-repo"
@@ -390,7 +395,7 @@ const SubmitProjectPage = () => {
                   type="url"
                   id="demoLink"
                   value={demoLink}
-                  onChange={(e) => setDemoLink(e.target.value)}
+                  onChange={e => setDemoLink(e.target.value)}
                   className="w-full rounded-xl border border-border/40 bg-background px-4 py-2.5 text-sm transition-colors focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
                   placeholder="https://your-project-demo.com"
                 />
@@ -405,7 +410,7 @@ const SubmitProjectPage = () => {
                   type="url"
                   id="videoLink"
                   value={videoLink}
-                  onChange={(e) => setVideoLink(e.target.value)}
+                  onChange={e => setVideoLink(e.target.value)}
                   className="w-full rounded-xl border border-border/40 bg-background px-4 py-2.5 text-sm transition-colors focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
                   placeholder="https://youtube.com/watch?v=..."
                 />
@@ -420,7 +425,7 @@ const SubmitProjectPage = () => {
                   type="url"
                   id="presentationLink"
                   value={presentationLink}
-                  onChange={(e) => setPresentationLink(e.target.value)}
+                  onChange={e => setPresentationLink(e.target.value)}
                   className="w-full rounded-xl border border-border/40 bg-background px-4 py-2.5 text-sm transition-colors focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
                   placeholder="https://slides.google.com/..."
                 />
@@ -432,7 +437,7 @@ const SubmitProjectPage = () => {
           <div className="flex items-center justify-end gap-3 rounded-2xl border border-border/40 bg-card/50 p-4 shadow-sm backdrop-blur-sm">
             <button
               type="button"
-              onClick={(e) => handleSubmit(e as any, true)}
+              onClick={e => handleSubmit(e as any, true)}
               disabled={isSubmitting}
               className="rounded-xl border border-border/40 px-6 py-2.5 text-sm font-medium transition-colors hover:bg-accent disabled:opacity-50"
             >

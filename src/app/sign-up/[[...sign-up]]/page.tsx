@@ -1,8 +1,13 @@
 'use client';
 
-import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+
+import { RoleSelect } from '@/components/auth/RoleSelect';
+import { UserRole } from '@/types/Enum';
+
+const SIGN_UP_ROLES: UserRole[] = [UserRole.PARTICIPANT, UserRole.JUDGE, UserRole.ORGANIZER];
 
 export default function SignUpPage() {
   const router = useRouter();
@@ -11,6 +16,7 @@ export default function SignUpPage() {
     email: '',
     password: '',
     confirmPassword: '',
+    role: UserRole.PARTICIPANT,
   });
   const [error, setError] = useState('');
 
@@ -33,20 +39,36 @@ export default function SignUpPage() {
       return;
     }
 
+    const role = SIGN_UP_ROLES.includes(formData.role) ? formData.role : UserRole.PARTICIPANT;
+
     // Store user data in localStorage for demo purposes
-    localStorage.setItem('user', JSON.stringify({ 
+    localStorage.setItem('user', JSON.stringify({
       email: formData.email,
       name: formData.name,
+      role,
     }));
-    
-    router.push('/dashboard');
+
+    // Redirect based on role
+    const defaultPath = (() => {
+      switch (role) {
+        case UserRole.JUDGE:
+          return '/dashboard/judge';
+        case UserRole.ORGANIZER:
+          return '/dashboard/organizer';
+        case UserRole.PARTICIPANT:
+        default:
+          return '/dashboard';
+      }
+    })();
+
+    router.push(defaultPath);
   };
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-[#f0f0f0] via-white to-[#f0f0f0]">
       <div className="w-full max-w-md space-y-8 rounded-2xl border border-border/40 bg-white/80 p-8 shadow-xl backdrop-blur-sm">
         <div className="text-center">
-          <h2 className="text-3xl font-bold bg-gradient-to-r from-[#4285f4] via-[#34a853] to-[#ea4335] bg-clip-text text-transparent">
+          <h2 className="bg-gradient-to-r from-[#4285f4] via-[#34a853] to-[#ea4335] bg-clip-text text-3xl font-bold text-transparent">
             Sign Up
           </h2>
           <p className="mt-2 text-sm text-muted-foreground">
@@ -61,6 +83,13 @@ export default function SignUpPage() {
         )}
 
         <form onSubmit={handleSubmit} className="space-y-6">
+          <RoleSelect
+            value={formData.role}
+            onChange={role => setFormData({ ...formData, role })}
+            roles={SIGN_UP_ROLES}
+            className="mb-6"
+          />
+
           <div>
             <label htmlFor="name" className="block text-sm font-medium text-foreground">
               Full Name
@@ -71,7 +100,7 @@ export default function SignUpPage() {
               type="text"
               required
               value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              onChange={e => setFormData({ ...formData, name: e.target.value })}
               className="mt-1 w-full rounded-lg border border-border bg-background px-4 py-2 text-foreground transition-colors focus:border-[#4285f4] focus:outline-none focus:ring-2 focus:ring-[#4285f4]/20"
               placeholder="John Doe"
             />
@@ -87,7 +116,7 @@ export default function SignUpPage() {
               type="email"
               required
               value={formData.email}
-              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+              onChange={e => setFormData({ ...formData, email: e.target.value })}
               className="mt-1 w-full rounded-lg border border-border bg-background px-4 py-2 text-foreground transition-colors focus:border-[#4285f4] focus:outline-none focus:ring-2 focus:ring-[#4285f4]/20"
               placeholder="you@example.com"
             />
@@ -103,7 +132,7 @@ export default function SignUpPage() {
               type="password"
               required
               value={formData.password}
-              onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+              onChange={e => setFormData({ ...formData, password: e.target.value })}
               className="mt-1 w-full rounded-lg border border-border bg-background px-4 py-2 text-foreground transition-colors focus:border-[#4285f4] focus:outline-none focus:ring-2 focus:ring-[#4285f4]/20"
               placeholder="••••••••"
             />
@@ -119,7 +148,7 @@ export default function SignUpPage() {
               type="password"
               required
               value={formData.confirmPassword}
-              onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
+              onChange={e => setFormData({ ...formData, confirmPassword: e.target.value })}
               className="mt-1 w-full rounded-lg border border-border bg-background px-4 py-2 text-foreground transition-colors focus:border-[#4285f4] focus:outline-none focus:ring-2 focus:ring-[#4285f4]/20"
               placeholder="••••••••"
             />
@@ -134,7 +163,8 @@ export default function SignUpPage() {
         </form>
 
         <p className="text-center text-sm text-muted-foreground">
-          Already have an account?{' '}
+          Already have an account?
+          {' '}
           <Link href="/sign-in" className="font-medium text-[#4285f4] hover:underline">
             Sign in
           </Link>

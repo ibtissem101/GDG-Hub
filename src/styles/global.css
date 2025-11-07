@@ -5,26 +5,26 @@
 @layer base {
   :root {
     /* GDG Brand Colors */
-    --gdg-blue: 210 100% 60%;      /* #4285f4 */
-    --gdg-green: 140 64% 43%;      /* #34a853 */
-    --gdg-yellow: 40 100% 49%;     /* #f9ab00 */
-    --gdg-red: 4 82% 57%;          /* #ea4335 */
-    
+    --gdg-blue: 210 100% 60%; /* #4285f4 */
+    --gdg-green: 140 64% 43%; /* #34a853 */
+    --gdg-yellow: 40 100% 49%; /* #f9ab00 */
+    --gdg-red: 4 82% 57%; /* #ea4335 */
+
     /* GDG Halftone Colors */
-    --gdg-blue-light: 195 100% 68%;    /* #57caff */
-    --gdg-green-light: 130 71% 61%;    /* #5cdb6d */
-    --gdg-yellow-light: 48 100% 58%;   /* #ffd427 */
-    --gdg-red-light: 338 100% 74%;     /* #ff7daf */
-    
+    --gdg-blue-light: 195 100% 68%; /* #57caff */
+    --gdg-green-light: 130 71% 61%; /* #5cdb6d */
+    --gdg-yellow-light: 48 100% 58%; /* #ffd427 */
+    --gdg-red-light: 338 100% 74%; /* #ff7daf */
+
     /* GDG Pastel Colors */
-    --gdg-blue-pastel: 191 76% 85%;    /* #c3ecf6 */
-    --gdg-green-pastel: 113 70% 86%;   /* #ccf6c5 */
-    --gdg-yellow-pastel: 44 100% 82%;  /* #ffe7a5 */
-    --gdg-red-pastel: 0 78% 92%;       /* #f8d8d8 */
-    
+    --gdg-blue-pastel: 191 76% 85%; /* #c3ecf6 */
+    --gdg-green-pastel: 113 70% 86%; /* #ccf6c5 */
+    --gdg-yellow-pastel: 44 100% 82%; /* #ffe7a5 */
+    --gdg-red-pastel: 0 78% 92%; /* #f8d8d8 */
+
     /* GDG Grayscale */
-    --gdg-off-white: 0 0% 94%;     /* #f0f0f0 */
-    --gdg-black: 0 0% 12%;         /* #1e1e1e */
+    --gdg-off-white: 0 0% 94%; /* #f0f0f0 */
+    --gdg-black: 0 0% 12%; /* #1e1e1e */
 
     /* Theme Variables */
     --background: 0 0% 100%;
@@ -105,40 +105,56 @@
   * {
     @apply border-border;
   }
-  
-  /* 
+
+  /*
     GDG Typography Guidelines
-    
+
     Main Typeface: Google Sans
     - Use Regular (400) for body text and paragraphs
     - Use Bold (700) for headings and important text
     - Combine bold and regular for titles to avoid heavy design
-    
+
     Secondary Typeface: Google Sans Mono
     - Use for code-style writing, technical details
     - Use for short lines, talent names, or additional data
     - Brings variety and perception of "code-style writing"
-    
+
     Usage Examples:
     - Body text: font-normal (400)
     - Headings: font-bold (700)
     - Code/Technical: font-mono
     - Badges/Labels: font-mono for code-style appearance
   */
-  
+
   /* GDG Typography - Google Sans */
   body {
-    font-family: 'Google Sans', system-ui, -apple-system, sans-serif;
+    font-family:
+      'Google Sans',
+      system-ui,
+      -apple-system,
+      sans-serif;
     font-weight: 400; /* Regular */
   }
-  
-  h1, h2, h3, h4, h5, h6 {
-    font-family: 'Google Sans', system-ui, -apple-system, sans-serif;
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family:
+      'Google Sans',
+      system-ui,
+      -apple-system,
+      sans-serif;
     font-weight: 700; /* Bold */
   }
-  
+
   /* Use Google Sans Mono for code-style elements */
-  code, pre, kbd, samp {
+  code,
+  pre,
+  kbd,
+  samp {
     font-family: 'Google Sans Mono', ui-monospace, monospace;
     font-weight: 400;
   }

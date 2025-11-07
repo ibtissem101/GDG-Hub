@@ -1,10 +1,10 @@
 import Link from 'next/link';
 
-import { CenteredFooter } from './CenteredFooter';
-import { Section } from './Section';
 import { AppConfig } from '@/utils/AppConfig';
 
+import { CenteredFooter } from './CenteredFooter';
 import { Logo } from './Logo';
+import { Section } from './Section';
 
 export const Footer = () => {
   return (

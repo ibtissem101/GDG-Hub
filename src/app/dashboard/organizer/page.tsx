@@ -1,10 +1,11 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+
 import { DashboardLayout } from '@/components/dashboard/DashboardLayout';
 import { UserRole } from '@/types/Enum';
 
-interface Stats {
+type Stats = {
   totalProjects: number;
   submittedProjects: number;
   draftProjects: number;
@@ -14,10 +15,9 @@ interface Stats {
   totalJudges: number;
   totalEvaluations: number;
   finalizedEvaluations: number;
-}
+};
 
-const OrganizerPanelPage = () => {
-  const userRole = UserRole.ORGANIZER;
+export default function OrganizerPanelPage() {
   const [stats, setStats] = useState<Stats | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -34,20 +34,20 @@ const OrganizerPanelPage = () => {
         setLoading(false);
       }
     };
-    
+
     fetchStats();
   }, []);
 
   if (loading) {
     return (
-      <DashboardLayout userRole={userRole}>
+      <DashboardLayout requiredRoles={[UserRole.ORGANIZER, UserRole.ADMIN]}>
         <div className="flex h-screen items-center justify-center">Loading...</div>
       </DashboardLayout>
     );
   }
 
   return (
-    <DashboardLayout userRole={userRole}>
+    <DashboardLayout requiredRoles={[UserRole.ORGANIZER, UserRole.ADMIN]}>
       <div className="mb-8">
         <h1 className="text-3xl font-bold">Manage Hackathon</h1>
         <p className="mt-2 text-muted-foreground">
@@ -80,7 +80,7 @@ const OrganizerPanelPage = () => {
         {/* All Submissions */}
         <div className="rounded-xl border border-border bg-card p-6">
           <h2 className="mb-4 text-xl font-bold">All Submissions</h2>
-          <div className="text-center py-8 text-muted-foreground">
+          <div className="py-8 text-center text-muted-foreground">
             <p>No submissions yet</p>
           </div>
         </div>
@@ -88,7 +88,7 @@ const OrganizerPanelPage = () => {
         {/* Judge Assignments */}
         <div className="rounded-xl border border-border bg-card p-6">
           <h2 className="mb-4 text-xl font-bold">Judge Assignments</h2>
-          <div className="text-center py-8 text-muted-foreground">
+          <div className="py-8 text-center text-muted-foreground">
             <p>No assignments yet</p>
           </div>
         </div>
@@ -109,5 +109,3 @@ const OrganizerPanelPage = () => {
     </DashboardLayout>
   );
 };
-
-export default OrganizerPanelPage;
